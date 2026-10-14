@@ -15,7 +15,7 @@ public class DatabaseConnection {
             Class.forName(driver);
             // TODO : Poner el puerto "3307" porque en mi ordenador personal el XAMPP está configurado así
             // TODO : La BD en phpMyAdmin se llamará "juegos"
-            String url = "jdbc:mariadb://localhost:3307/juegos";
+            String url = "jdbc:mariadb://localhost:3306/juegos";
             String user = "root";
             String password = "";
             this.connection = DriverManager.getConnection(url, user, password);
