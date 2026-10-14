@@ -28,12 +28,13 @@ public class Juego {
 
     // TODO : Revisar si crear más constructores en todas las clases (igual es necesario que tengan menos datos al empezar)
     // Constructor con todos los atributos
-    public Juego(int id, String nombre, List<String> listaAutores, String descripcion, int minJugadores,
+    public Juego(int id, String nombre, String autor1, String autor2, String descripcion, int minJugadores,
                  int maxJugadores, int duracion, String tematica, boolean competitivo, String ubicacion,
                  String estado, Asociacion asociacionPropietaria, Socia sociaPropietaria, LocalDate fechaAlta) {
         this.id = id;
         this.nombre = nombre;
-        this.listaAutores = listaAutores;
+        this.autor1 = autor1;
+        this.autor2 = autor2;
         this.descripcion = descripcion;
         this.minJugadores = minJugadores;
         this.maxJugadores = maxJugadores;
@@ -65,12 +66,20 @@ public class Juego {
         this.nombre = nombre;
     }
 
-    public List<String> getListaAutores() {
-        return listaAutores;
+    public String getAutor1() {
+        return autor1;
     }
 
-    public void setListaAutores(List<String> listaAutores) {
-        this.listaAutores = listaAutores;
+    public void setAutor1(String autor1) {
+        this.autor1 = autor1;
+    }
+
+    public String getAutor2() {
+        return autor2;
+    }
+
+    public void setAutor2(String autor2) {
+        this.autor2 = autor2;
     }
 
     public String getDescripcion() {
@@ -168,7 +177,8 @@ public class Juego {
         return "Juego{" +
                 "id=" + id +
                 ", nombre='" + nombre + '\'' +
-                ", listaAutores=" + listaAutores +
+                ", autor1='" + autor1 + '\'' +
+                ", autor2='" + autor2 + '\'' +
                 ", descripcion='" + descripcion + '\'' +
                 ", minJugadores=" + minJugadores +
                 ", maxJugadores=" + maxJugadores +
