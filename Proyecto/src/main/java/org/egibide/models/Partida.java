@@ -11,6 +11,7 @@ public class Partida {
     // Como una partida puede tener jugadoras socias y/o invitadas, mediante 2 atributos se registran
     private List<Socia> listaJugadorasSocias = new ArrayList<>();
     private List<Invitada> listaJugadorasInvitadas = new ArrayList<>();
+    // En phpMyAdmin --> En la tabla Partida, se añade "ON DELETE CASCADE" a la clave ajena del juego si se quiere que, al borrar un juego, se borren también sus partidas y las participaciones asociadas
     private Juego juego;
     private LocalDate fecha;
     private LocalTime hora;

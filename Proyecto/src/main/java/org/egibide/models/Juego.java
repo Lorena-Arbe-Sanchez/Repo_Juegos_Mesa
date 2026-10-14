@@ -1,14 +1,14 @@
 package org.egibide.models;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Juego {
 
     private int id;
     private String nombre;
-    private List<String> listaAutores = new ArrayList<>();
+    private String autor1;
+    private String autor2;
     private String descripcion;
     private int minJugadores;
     private int maxJugadores;
