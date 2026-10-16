@@ -3,6 +3,9 @@ package org.egibide;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import org.egibide.utils.DatabaseConnection;
+
+import java.sql.Connection;
 
 /**
  * Unit test for simple App.
@@ -30,4 +33,27 @@ public class AppTest extends TestCase {
     public void testApp() {
         assertTrue(true);
     }
+
+    // Comprobar la conexion con la base de datos
+    public void testConexion() throws Exception {
+
+        Connection conexion = DatabaseConnection
+                .getInstance()
+                .getConnection();
+
+        assertNotNull(conexion);
+        assertFalse(conexion.isClosed());
+    }
+
+    // Probar los metodos de AsociacionDAO
+    public void testAsociacionDAO() {
+
+        //
+    }
 }
+
+/*
+Resultado de los Test:
+
+
+ */
