@@ -34,6 +34,8 @@ public class AppTest extends TestCase {
         assertTrue(true);
     }
 
+    // TODO : Hacer lo de "Implementación de suite de tests mediante JUnit."
+
     // Comprobar la conexion con la base de datos
     public void testConexion() throws Exception {
 
