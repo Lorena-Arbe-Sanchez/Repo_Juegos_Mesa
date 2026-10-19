@@ -1,0 +1,91 @@
+METADATOS DE LA BASE DE DATOS
+Nombre BBDD: juegos
+Esquema: juegos
+Driver: MariaDB Connector/J
+Versión del driver: 3.3.3
+URL: jdbc:mariadb://localhost:3307/juegos?user=root
+
+TABLA: asociacion
+Esquema: juegos
+Claves primarias: id 
+Columnas:
+- id | Tipo: INT | Permite nulos: No
+- nombre | Tipo: VARCHAR | Permite nulos: No
+- razon_social | Tipo: VARCHAR | Permite nulos: Sí
+- fecha_apertura | Tipo: DATE | Permite nulos: Sí
+- direccion | Tipo: VARCHAR | Permite nulos: Sí
+- telefono | Tipo: VARCHAR | Permite nulos: Sí
+- email | Tipo: VARCHAR | Permite nulos: Sí
+- cif | Tipo: VARCHAR | Permite nulos: Sí
+
+TABLA: invitada
+Esquema: juegos
+Claves primarias: documento 
+Columnas:
+- documento | Tipo: VARCHAR | Permite nulos: No
+- nombre | Tipo: VARCHAR | Permite nulos: No
+- apellido1 | Tipo: VARCHAR | Permite nulos: No
+- apellido2 | Tipo: VARCHAR | Permite nulos: Sí
+- telefono | Tipo: VARCHAR | Permite nulos: Sí
+- edad | Tipo: INT | Permite nulos: Sí
+- email | Tipo: VARCHAR | Permite nulos: Sí
+
+TABLA: juego
+Esquema: juegos
+Claves primarias: id 
+Columnas:
+- id | Tipo: INT | Permite nulos: No
+- nombre | Tipo: VARCHAR | Permite nulos: No
+- autor1 | Tipo: VARCHAR | Permite nulos: No
+- autor2 | Tipo: VARCHAR | Permite nulos: Sí
+- descripcion | Tipo: TEXT | Permite nulos: Sí
+- min_jugadores | Tipo: INT | Permite nulos: No
+- max_jugadores | Tipo: INT | Permite nulos: No
+- duracion | Tipo: INT | Permite nulos: No
+- tematica | Tipo: VARCHAR | Permite nulos: Sí
+- competitivo | Tipo: BOOLEAN | Permite nulos: No
+- ubicacion | Tipo: VARCHAR | Permite nulos: Sí
+- estado | Tipo: ENUM | Permite nulos: No
+- asociacion_id | Tipo: INT | Permite nulos: Sí
+- socia_documento | Tipo: VARCHAR | Permite nulos: Sí
+- fecha_alta | Tipo: DATE | Permite nulos: Sí
+
+TABLA: partida
+Esquema: juegos
+Claves primarias: id 
+Columnas:
+- id | Tipo: INT | Permite nulos: No
+- juego_id | Tipo: INT | Permite nulos: No
+- fecha | Tipo: DATE | Permite nulos: No
+- hora | Tipo: TIME | Permite nulos: No
+- jugadores_deseados | Tipo: INT | Permite nulos: No
+- plazas_libres | Tipo: INT | Permite nulos: No
+
+TABLA: partida_invitada
+Esquema: juegos
+Claves primarias: invitada_documento partida_id 
+Columnas:
+- partida_id | Tipo: INT | Permite nulos: No
+- invitada_documento | Tipo: VARCHAR | Permite nulos: No
+- es_ganadora | Tipo: BOOLEAN | Permite nulos: No
+
+TABLA: partida_socia
+Esquema: juegos
+Claves primarias: partida_id socia_documento 
+Columnas:
+- partida_id | Tipo: INT | Permite nulos: No
+- socia_documento | Tipo: VARCHAR | Permite nulos: No
+- es_ganadora | Tipo: BOOLEAN | Permite nulos: No
+
+TABLA: socia
+Esquema: juegos
+Claves primarias: documento 
+Columnas:
+- documento | Tipo: VARCHAR | Permite nulos: No
+- nombre | Tipo: VARCHAR | Permite nulos: No
+- apellido1 | Tipo: VARCHAR | Permite nulos: No
+- apellido2 | Tipo: VARCHAR | Permite nulos: Sí
+- telefono | Tipo: VARCHAR | Permite nulos: Sí
+- edad | Tipo: INT | Permite nulos: Sí
+- email | Tipo: VARCHAR | Permite nulos: Sí
+

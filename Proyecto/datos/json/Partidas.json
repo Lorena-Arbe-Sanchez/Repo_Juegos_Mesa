@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "juego_id": 1,
+    "fecha": "2026-10-16",
+    "hora": "17:00:00",
+    "jugadores_deseados": 6,
+    "plazas_libres": 2
+  },
+  {
+    "id": 2,
+    "juego_id": 2,
+    "fecha": "2026-10-17",
+    "hora": "18:00:00",
+    "jugadores_deseados": 4,
+    "plazas_libres": 1
+  },
+  {
+    "id": 3,
+    "juego_id": 3,
+    "fecha": "2026-10-18",
+    "hora": "17:30:00",
+    "jugadores_deseados": 5,
+    "plazas_libres": 2
+  },
+  {
+    "id": 4,
+    "juego_id": 5,
+    "fecha": "2026-10-20",
+    "hora": "19:00:00",
+    "jugadores_deseados": 4,
+    "plazas_libres": 1
+  },
+  {
+    "id": 5,
+    "juego_id": 7,
+    "fecha": "2026-10-22",
+    "hora": "17:00:00",
+    "jugadores_deseados": 6,
+    "plazas_libres": 2
+  },
+  {
+    "id": 6,
+    "juego_id": 8,
+    "fecha": "2026-10-24",
+    "hora": "18:30:00",
+    "jugadores_deseados": 4,
+    "plazas_libres": 1
+  }
+]
