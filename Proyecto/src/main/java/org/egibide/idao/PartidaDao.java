@@ -9,7 +9,8 @@ import java.util.List;
 public interface PartidaDao {
 
     List<Partida> listar() throws SQLException;
-    void insertar(Partida partida) throws SQLException;
+    //cambio de void a int
+    int insertar(Partida partida) throws SQLException;
     Partida buscarporId(int id) throws SQLException;
     void eliminar(int id) throws SQLException;
     void actualizar(Partida partida) throws SQLException;
