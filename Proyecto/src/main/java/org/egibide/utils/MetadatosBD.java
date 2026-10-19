@@ -8,6 +8,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+// TODO : Debería de imprimirlo por la terminal antes de de exportarlo al fichero txt
 public class MetadatosBD {
 
     public static void main(String[] args) {

@@ -10,6 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+// TODO : En el manual poner que la clase ejecutable es esta (y no dejarla con demasiadas líneas; hacer funciones y separar código)
+
 public class App {
     public static void main(String[] args) throws SQLException {
 
@@ -206,6 +208,7 @@ public class App {
         }
     }
 
+    // TODO : Separar las exportaciones de XML y JSON en diferentes opciones
     // Menú de exportaciones
     private static void menuExportaciones(Scanner sc) throws Exception {
 
