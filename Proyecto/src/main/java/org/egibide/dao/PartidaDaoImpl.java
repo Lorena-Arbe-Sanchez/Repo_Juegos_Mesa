@@ -19,9 +19,9 @@ public class PartidaDaoImpl implements PartidaDao {
         String sql = "SELECT * FROM partidas";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        try {
+        /*try {
 
-        }
+        }*/
 
         return lista;
     }
