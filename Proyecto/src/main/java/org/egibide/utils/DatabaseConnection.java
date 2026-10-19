@@ -19,7 +19,7 @@ public class DatabaseConnection {
             String password = "";
             this.connection = DriverManager.getConnection(url, user, password);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new SQLException("No se ha encontrado el driver de MariaDB.", e);
         }
     }
 
