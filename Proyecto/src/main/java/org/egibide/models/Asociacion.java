@@ -2,6 +2,8 @@ package org.egibide.models;
 
 import java.time.LocalDate;
 
+// TODO : Si hacemos la interfaz; habrá q añadir columna de img (tipo enlace src) y cambiar tanto aquí como en phpMyAdmin
+
 public class Asociacion {
 
     private int id;

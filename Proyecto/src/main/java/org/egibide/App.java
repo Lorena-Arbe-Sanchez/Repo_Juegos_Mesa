@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-// TODO : En el manual poner que la clase ejecutable es esta (y no dejarla con demasiadas líneas; hacer funciones y separar código)
+// TODO : No dejar esta clase con demasiadas líneas; hacer funciones y separar código en diferentes ficheros y carpetas
 
 public class App {
     public static void main(String[] args) throws SQLException {
@@ -38,7 +38,7 @@ public class App {
                 System.out.println("4. Exportar datos XML y JSON");
                 System.out.println("5. Metadatos de la BBDD");
                 System.out.println("0. Salir");
-                System.out.print("Elige una opción: ");
+                System.out.print("\nElige una opción: ");
 
                 opcion = Integer.parseInt(sc.nextLine());
 
@@ -56,7 +56,9 @@ public class App {
                         menuExportaciones(sc);
                         break;
                     case 5:
-                        MetadatosBD.main(new String[0]);
+                        System.out.println("\n");
+                        MetadatosBD.mostrarMetadatos();
+                        MetadatosBD.exportarMetadatos();
                         break;
                     case 0:
                         System.out.println("¡Hasta pronto!");
@@ -113,7 +115,7 @@ public class App {
         System.out.println("3. Modificar un juego");
         System.out.println("4. Dar de baja un juego");
         System.out.println("0. Volver al menú principal");
-        System.out.print("Elige una opción: ");
+        System.out.print("\nElige una opción: ");
 
         int opcion = Integer.parseInt(sc.nextLine());
 
@@ -148,7 +150,7 @@ public class App {
         System.out.println("4. Modificar una socia");
         System.out.println("5. Dar de baja una socia");
         System.out.println("0. Volver al menú principal");
-        System.out.print("Elige una opción: ");
+        System.out.print("\nElige una opción: ");
 
         int opcion = Integer.parseInt(sc.nextLine());
 
@@ -184,7 +186,7 @@ public class App {
         System.out.println("3. Modificar una partida");
         System.out.println("4. Dar de baja una partida");
         System.out.println("0. Volver al menú principal");
-        System.out.print("Elige una opción: ");
+        System.out.print("\nElige una opción: ");
 
         int opcion = Integer.parseInt(sc.nextLine());
 
@@ -218,7 +220,7 @@ public class App {
         System.out.println("3. Exportar partidas");
         System.out.println("4. Exportar todo");
         System.out.println("0. Volver al menú principal");
-        System.out.print("Elige una opción: ");
+        System.out.print("\nElige una opción: ");
 
         int opcion = Integer.parseInt(sc.nextLine());
 
@@ -250,7 +252,7 @@ public class App {
         }
 
         if (opcion >= 1 && opcion <= 4) {
-            System.out.println("Exportación finalizada.");
+            System.out.println("\nExportación finalizada.");
         }
     }
 }

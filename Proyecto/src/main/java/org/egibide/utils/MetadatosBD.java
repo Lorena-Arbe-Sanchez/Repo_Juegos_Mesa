@@ -1,3 +1,4 @@
+
 package org.egibide.utils;
 
 import java.io.BufferedWriter;
@@ -8,123 +9,94 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-// TODO : Debería de imprimirlo por la terminal antes de de exportarlo al fichero txt
 public class MetadatosBD {
 
-    public static void main(String[] args) {
+    // Mostrar los metadatos por terminal
+    public static void mostrarMetadatos() throws SQLException {
+        System.out.println(obtenerMetadatos());
+    }
+
+    // Exportar los metadatos a un fichero TXT
+    public static void exportarMetadatos() throws SQLException, IOException {
 
         String nombreArchivo = "datos/metadatos/metadatos_bbdd.txt";
 
-        try (Connection conexion = DatabaseConnection.getInstance().getConnection();
-             BufferedWriter escritor = new BufferedWriter(new FileWriter(nombreArchivo))) {
+        try (BufferedWriter escritor = new BufferedWriter(new FileWriter(nombreArchivo))) {
+            escritor.write(obtenerMetadatos());
+        }
 
-            // Obtener los metadatos de la base de datos
-            DatabaseMetaData metadatos = conexion.getMetaData();
+        System.out.println("Metadatos exportados en: " + nombreArchivo + "\n");
+    }
 
-            // Datos generales de la conexión
-            escritor.write("METADATOS DE LA BASE DE DATOS");
-            escritor.newLine();
-            escritor.write("Nombre BBDD: " + conexion.getCatalog());
-            escritor.newLine();
-            escritor.write("Esquema: " + conexion.getCatalog());
-            escritor.newLine();
-            escritor.write("Driver: " + metadatos.getDriverName());
-            escritor.newLine();
-            escritor.write("Versión del driver: " + metadatos.getDriverVersion());
-            escritor.newLine();
-            escritor.write("URL: " + metadatos.getURL());
-            escritor.newLine();
-            escritor.newLine();
+    // Obtener todos los metadatos
+    private static String obtenerMetadatos() throws SQLException {
 
-            // Obtener las tablas de la base de datos
-            ResultSet tablas = metadatos.getTables(
-                    conexion.getCatalog(),
-                    null,
-                    "%",
-                    new String[]{"TABLE"}
-            );
+        StringBuilder texto = new StringBuilder();
+
+        Connection conexion = DatabaseConnection.getInstance().getConnection();
+
+        DatabaseMetaData metadatos = conexion.getMetaData();
+
+        texto.append("METADATOS DE LA BASE DE DATOS\n");
+        texto.append("Nombre BBDD: ").append(conexion.getCatalog()).append("\n");
+        texto.append("Esquema: ").append(conexion.getCatalog()).append("\n");
+        texto.append("Driver: ").append(metadatos.getDriverName()).append("\n");
+        texto.append("Versión del driver: ").append(metadatos.getDriverVersion()).append("\n");
+        texto.append("URL: ").append(metadatos.getURL()).append("\n\n");
+
+        try (ResultSet tablas = metadatos.getTables(conexion.getCatalog(), null,
+                "%", new String[]{"TABLE"})) {
 
             while (tablas.next()) {
 
                 String nombreTabla = tablas.getString("TABLE_NAME");
                 String esquema = tablas.getString("TABLE_CAT");
 
-                escritor.write("TABLA: " + nombreTabla);
-                escritor.newLine();
-                escritor.write("Esquema: " + esquema);
-                escritor.newLine();
+                texto.append("TABLA: ").append(nombreTabla).append("\n");
+                texto.append("Esquema: ").append(esquema).append("\n");
 
                 // Obtener las claves primarias
-                ResultSet claves = metadatos.getPrimaryKeys(
-                        conexion.getCatalog(),
-                        esquema,
-                        nombreTabla
-                );
-
-                escritor.write("Claves primarias: ");
+                texto.append("Claves primarias: ");
 
                 boolean tieneClave = false;
 
-                while (claves.next()) {
-                    escritor.write(claves.getString("COLUMN_NAME") + " ");
-                    tieneClave = true;
+                try (ResultSet claves = metadatos.getPrimaryKeys(conexion.getCatalog(), null, nombreTabla)) {
+
+                    while (claves.next()) {
+                        texto.append(claves.getString("COLUMN_NAME")).append(" ");
+                        tieneClave = true;
+                    }
                 }
 
                 if (!tieneClave) {
-                    escritor.write("No tiene");
+                    texto.append("No tiene");
                 }
 
-                escritor.newLine();
-                claves.close();
+                texto.append("\nColumnas:\n");
 
                 // Obtener las columnas de la tabla
-                ResultSet columnas = metadatos.getColumns(
-                        conexion.getCatalog(),
-                        esquema,
-                        nombreTabla,
-                        "%"
-                );
+                try (ResultSet columnas = metadatos.getColumns(conexion.getCatalog(), null,
+                        nombreTabla, "%")) {
 
-                escritor.write("Columnas:");
-                escritor.newLine();
+                    while (columnas.next()) {
 
-                while (columnas.next()) {
+                        String nombreColumna = columnas.getString("COLUMN_NAME");
 
-                    String nombreColumna =
-                            columnas.getString("COLUMN_NAME");
+                        String tipo = columnas.getString("TYPE_NAME");
 
-                    String tipo =
-                            columnas.getString("TYPE_NAME");
+                        boolean permiteNulos = columnas.getInt("NULLABLE")
+                                == DatabaseMetaData.columnNullable;
 
-                    boolean permiteNulos =
-                            columnas.getInt("NULLABLE")
-                                    == DatabaseMetaData.columnNullable;
-
-                    escritor.write(
-                            "- " + nombreColumna
-                                    + " | Tipo: " + tipo
-                                    + " | Permite nulos: "
-                                    + (permiteNulos ? "Sí" : "No")
-                    );
-
-                    escritor.newLine();
+                        texto.append("- ").append(nombreColumna)
+                                .append(" | Tipo: ").append(tipo)
+                                .append(" | Permite nulos: ")
+                                .append(permiteNulos ? "Sí" : "No")
+                                .append("\n");
+                    }
                 }
-
-                columnas.close();
-
-                escritor.newLine();
             }
-
-            tablas.close();
-
-            System.out.println(
-                    "Metadatos exportados en: " + nombreArchivo
-            );
-
-        } catch (SQLException | IOException e) {
-            System.out.println(
-                    "Error al obtener los metadatos: " + e.getMessage()
-            );
         }
+
+        return texto.toString();
     }
 }
