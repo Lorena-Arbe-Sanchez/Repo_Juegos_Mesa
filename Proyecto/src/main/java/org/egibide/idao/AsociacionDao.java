@@ -4,6 +4,7 @@ import org.egibide.models.Asociacion;
 
 import java.util.List;
 
+// AsociacionDao: define las operaciones para gestionar asociaciones.
 public interface AsociacionDao {
 
     int add(Asociacion asociacion);

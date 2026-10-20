@@ -16,7 +16,7 @@ public class PartidaDaoImpl implements PartidaDao {
     @Override
     public List<Partida> listar() throws SQLException {
         List<Partida> lista = new ArrayList<>();
-        String sql = "SELECT * FROM partidas";
+        String sql = "SELECT * FROM partida";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
         try (PreparedStatement ps = puente.prepareStatement(sql);
@@ -40,7 +40,7 @@ public class PartidaDaoImpl implements PartidaDao {
     @Override
     public int insertar(Partida partida) throws SQLException {
 
-        String sql = "INSERT INTO partidas (id, juego_id, fecha, hora, jugadores_deseados, plazas_libres) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO partida (juego_id, fecha, hora, jugadores_deseados, plazas_libres) VALUES (?, ?, ?, ?, ?)";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
         try (PreparedStatement ps = puente.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -62,7 +62,7 @@ public class PartidaDaoImpl implements PartidaDao {
 
     @Override
     public Partida buscarporId(int id) throws SQLException {
-        String sql = "SELECT * FROM partidas WHERE id = ?";
+        String sql = "SELECT * FROM partida WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
         try (PreparedStatement ps = puente.prepareStatement(sql)){
@@ -87,7 +87,7 @@ public class PartidaDaoImpl implements PartidaDao {
     //ambos solo hacen la accion, no devuelven nada mas:
     @Override
     public void eliminar(int id) throws SQLException {
-        String sql = "DELETE FROM partidas WHERE id = ?";
+        String sql = "DELETE FROM partida WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
         try (PreparedStatement ps = puente.prepareStatement(sql)){
@@ -98,7 +98,7 @@ public class PartidaDaoImpl implements PartidaDao {
 
     @Override
     public void actualizar(Partida partida) throws SQLException {
-        String sql = "UPDATE partidas SET juego_id = ?, fecha = ?, jugadores_deseados = ?, plazas_libres = ? WHERE id = ?";
+        String sql = "UPDATE partida SET juego_id = ?, fecha = ?, hora = ?, jugadores_deseados = ?, plazas_libres = ? WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
         try (PreparedStatement ps = puente.prepareStatement(sql)){
