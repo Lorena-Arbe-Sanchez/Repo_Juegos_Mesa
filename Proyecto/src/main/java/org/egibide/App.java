@@ -210,15 +210,19 @@ public class App {
         }
     }
 
-    // TODO : Separar las exportaciones de XML y JSON en diferentes opciones
     // Menú de exportaciones
     private static void menuExportaciones(Scanner sc) throws Exception {
 
         System.out.println("\n===== EXPORTAR DATOS =====");
-        System.out.println("1. Exportar juegos");
-        System.out.println("2. Exportar socias");
-        System.out.println("3. Exportar partidas");
-        System.out.println("4. Exportar todo");
+        System.out.println("1. Exportar juegos a XML");
+        System.out.println("2. Exportar juegos a JSON");
+        System.out.println("3. Exportar socias a XML");
+        System.out.println("4. Exportar socias a JSON");
+        System.out.println("5. Exportar partidas a XML");
+        System.out.println("6. Exportar partidas a JSON");
+        System.out.println("7. Exportar todo a XML");
+        System.out.println("8. Exportar todo a JSON");
+        System.out.println("9. Exportar todo a XML y JSON");
         System.out.println("0. Volver al menú principal");
         System.out.print("\nElige una opción: ");
 
@@ -227,32 +231,49 @@ public class App {
         switch (opcion) {
             case 1:
                 ExportarDatos.exportarJuegosXML();
-                ExportarDatos.exportarJuegosJSON();
                 break;
             case 2:
-                ExportarDatos.exportarSociasXML();
-                ExportarDatos.exportarSociasJSON();
+                ExportarDatos.exportarJuegosJSON();
                 break;
             case 3:
-                ExportarDatos.exportarPartidasXML();
-                ExportarDatos.exportarPartidasJSON();
+                ExportarDatos.exportarSociasXML();
                 break;
             case 4:
-                ExportarDatos.exportarJuegosXML();
-                ExportarDatos.exportarJuegosJSON();
-                ExportarDatos.exportarSociasXML();
                 ExportarDatos.exportarSociasJSON();
+                break;
+            case 5:
                 ExportarDatos.exportarPartidasXML();
+                break;
+            case 6:
+                ExportarDatos.exportarPartidasJSON();
+                break;
+            case 7:
+                ExportarDatos.exportarJuegosXML();
+                ExportarDatos.exportarSociasXML();
+                ExportarDatos.exportarPartidasXML();
+                break;
+            case 8:
+                ExportarDatos.exportarJuegosJSON();
+                ExportarDatos.exportarSociasJSON();
+                ExportarDatos.exportarPartidasJSON();
+                break;
+            case 9:
+                ExportarDatos.exportarJuegosXML();
+                ExportarDatos.exportarSociasXML();
+                ExportarDatos.exportarPartidasXML();
+                ExportarDatos.exportarJuegosJSON();
+                ExportarDatos.exportarSociasJSON();
                 ExportarDatos.exportarPartidasJSON();
                 break;
             case 0:
                 break;
             default:
                 System.out.println("Opción no válida.");
+                return;
         }
 
-        if (opcion >= 1 && opcion <= 4) {
-            System.out.println("\nExportación finalizada.");
+        if (opcion != 0) {
+            System.out.println("Exportación finalizada.\n");
         }
     }
 }

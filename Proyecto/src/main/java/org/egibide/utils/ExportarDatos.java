@@ -109,7 +109,7 @@ public class ExportarDatos {
             xstream.toXML(datos, escritor);
         }
 
-        System.out.println("XML exportado: " + ruta);
+        System.out.println("\nXML exportado: " + ruta);
     }
 
     // Generar el fichero JSON
@@ -126,7 +126,7 @@ public class ExportarDatos {
             gson.toJson(datos, escritor);
         }
 
-        System.out.println("JSON exportado: " + ruta);
+        System.out.println("\nJSON exportado: " + ruta);
     }
 
     // Clase auxiliar para consultar las columnas del resultado
