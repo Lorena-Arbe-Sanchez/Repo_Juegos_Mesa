@@ -17,7 +17,6 @@ Columnas:
 - telefono | Tipo: VARCHAR | Permite nulos: Sí
 - email | Tipo: VARCHAR | Permite nulos: Sí
 - cif | Tipo: VARCHAR | Permite nulos: Sí
-
 TABLA: invitada
 Esquema: juegos
 Claves primarias: documento 
@@ -29,7 +28,6 @@ Columnas:
 - telefono | Tipo: VARCHAR | Permite nulos: Sí
 - edad | Tipo: INT | Permite nulos: Sí
 - email | Tipo: VARCHAR | Permite nulos: Sí
-
 TABLA: juego
 Esquema: juegos
 Claves primarias: id 
@@ -49,7 +47,6 @@ Columnas:
 - asociacion_id | Tipo: INT | Permite nulos: Sí
 - socia_documento | Tipo: VARCHAR | Permite nulos: Sí
 - fecha_alta | Tipo: DATE | Permite nulos: Sí
-
 TABLA: partida
 Esquema: juegos
 Claves primarias: id 
@@ -60,7 +57,6 @@ Columnas:
 - hora | Tipo: TIME | Permite nulos: No
 - jugadores_deseados | Tipo: INT | Permite nulos: No
 - plazas_libres | Tipo: INT | Permite nulos: No
-
 TABLA: partida_invitada
 Esquema: juegos
 Claves primarias: invitada_documento partida_id 
@@ -68,7 +64,6 @@ Columnas:
 - partida_id | Tipo: INT | Permite nulos: No
 - invitada_documento | Tipo: VARCHAR | Permite nulos: No
 - es_ganadora | Tipo: BOOLEAN | Permite nulos: No
-
 TABLA: partida_socia
 Esquema: juegos
 Claves primarias: partida_id socia_documento 
@@ -76,7 +71,6 @@ Columnas:
 - partida_id | Tipo: INT | Permite nulos: No
 - socia_documento | Tipo: VARCHAR | Permite nulos: No
 - es_ganadora | Tipo: BOOLEAN | Permite nulos: No
-
 TABLA: socia
 Esquema: juegos
 Claves primarias: documento 
@@ -88,4 +82,3 @@ Columnas:
 - telefono | Tipo: VARCHAR | Permite nulos: Sí
 - edad | Tipo: INT | Permite nulos: Sí
 - email | Tipo: VARCHAR | Permite nulos: Sí
-

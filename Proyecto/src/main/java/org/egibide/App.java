@@ -27,6 +27,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
+// TODO : No dejar esta clase con demasiadas líneas; hacer funciones y separar código en diferentes ficheros y carpetas
+
 public class App {
     public static void main(String[] args) throws SQLException {
 
@@ -53,7 +55,7 @@ public class App {
                 System.out.println("4. Exportar datos XML y JSON");
                 System.out.println("5. Metadatos de la BBDD");
                 System.out.println("0. Salir");
-                System.out.print("Elige una opción: ");
+                System.out.print("\nElige una opción: ");
 
                 opcion = Integer.parseInt(sc.nextLine());
 
@@ -71,7 +73,9 @@ public class App {
                         menuExportaciones(sc);
                         break;
                     case 5:
-                        MetadatosBD.main(new String[0]);
+                        System.out.println("\n");
+                        MetadatosBD.mostrarMetadatos();
+                        MetadatosBD.exportarMetadatos();
                         break;
                     case 0:
                         System.out.println("¡Hasta pronto!");
@@ -128,7 +132,7 @@ public class App {
         System.out.println("3. Modificar un juego");
         System.out.println("4. Dar de baja un juego");
         System.out.println("0. Volver al menú principal");
-        System.out.print("Elige una opción: ");
+        System.out.print("\nElige una opción: ");
 
         JuegoDao dao = new JuegoDaoImpl();
         SociaDao sociaDao = new SociaDaoImpl();
@@ -425,7 +429,7 @@ public class App {
         System.out.println("4. Modificar una socia");
         System.out.println("5. Dar de baja una socia");
         System.out.println("0. Volver al menú principal");
-        System.out.print("Elige una opción: ");
+        System.out.print("\nElige una opción: ");
 
         SociaDao dao = new SociaDaoImpl();
 
@@ -631,7 +635,7 @@ public class App {
         System.out.println("3. Modificar una partida");
         System.out.println("4. Dar de baja una partida");
         System.out.println("0. Volver al menú principal");
-        System.out.print("Elige una opción: ");
+        System.out.print("\nElige una opción: ");
 
         PartidaDao dao = new PartidaDaoImpl();
         JuegoDao juegoDao = new JuegoDaoImpl();
@@ -799,44 +803,66 @@ public class App {
     private static void menuExportaciones(Scanner sc) throws Exception {
 
         System.out.println("\n===== EXPORTAR DATOS =====");
-        System.out.println("1. Exportar juegos");
-        System.out.println("2. Exportar socias");
-        System.out.println("3. Exportar partidas");
-        System.out.println("4. Exportar todo");
+        System.out.println("1. Exportar juegos a XML");
+        System.out.println("2. Exportar juegos a JSON");
+        System.out.println("3. Exportar socias a XML");
+        System.out.println("4. Exportar socias a JSON");
+        System.out.println("5. Exportar partidas a XML");
+        System.out.println("6. Exportar partidas a JSON");
+        System.out.println("7. Exportar todo a XML");
+        System.out.println("8. Exportar todo a JSON");
+        System.out.println("9. Exportar todo a XML y JSON");
         System.out.println("0. Volver al menú principal");
-        System.out.print("Elige una opción: ");
+        System.out.print("\nElige una opción: ");
 
         int opcion = Integer.parseInt(sc.nextLine());
 
         switch (opcion) {
             case 1:
                 ExportarDatos.exportarJuegosXML();
-                ExportarDatos.exportarJuegosJSON();
                 break;
             case 2:
-                ExportarDatos.exportarSociasXML();
-                ExportarDatos.exportarSociasJSON();
+                ExportarDatos.exportarJuegosJSON();
                 break;
             case 3:
-                ExportarDatos.exportarPartidasXML();
-                ExportarDatos.exportarPartidasJSON();
+                ExportarDatos.exportarSociasXML();
                 break;
             case 4:
-                ExportarDatos.exportarJuegosXML();
-                ExportarDatos.exportarJuegosJSON();
-                ExportarDatos.exportarSociasXML();
                 ExportarDatos.exportarSociasJSON();
+                break;
+            case 5:
                 ExportarDatos.exportarPartidasXML();
+                break;
+            case 6:
+                ExportarDatos.exportarPartidasJSON();
+                break;
+            case 7:
+                ExportarDatos.exportarJuegosXML();
+                ExportarDatos.exportarSociasXML();
+                ExportarDatos.exportarPartidasXML();
+                break;
+            case 8:
+                ExportarDatos.exportarJuegosJSON();
+                ExportarDatos.exportarSociasJSON();
+                ExportarDatos.exportarPartidasJSON();
+                break;
+            case 9:
+                ExportarDatos.exportarJuegosXML();
+                ExportarDatos.exportarSociasXML();
+                ExportarDatos.exportarPartidasXML();
+                ExportarDatos.exportarJuegosJSON();
+                ExportarDatos.exportarSociasJSON();
                 ExportarDatos.exportarPartidasJSON();
                 break;
             case 0:
                 break;
             default:
                 System.out.println("Opción no válida.");
+                return;
         }
 
-        if (opcion >= 1 && opcion <= 4) {
-            System.out.println("Exportación finalizada.");
+        if (opcion != 0) {
+            System.out.println("Exportación finalizada.\n");
         }
     }
 }
