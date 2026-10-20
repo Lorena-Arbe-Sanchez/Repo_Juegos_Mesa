@@ -19,10 +19,20 @@ public class PartidaDaoImpl implements PartidaDao {
         String sql = "SELECT * FROM partidas";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        /*try {
+        try (PreparedStatement ps = puente.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
-        }*/
-
+            while (rs.next()) {
+                Partida partida = new Partida();
+                partida.setId(rs.getInt("id"));
+                partida.setFecha(rs.getDate("fecha").toLocalDate());
+                partida.setHora(rs.getTime("hora").toLocalTime());
+                partida.setJugadoresDeseados(rs.getInt("jugadores_deseados"));
+                partida.setPlazasLibres(rs.getInt("plazas_libres"));
+                // el juego, igual que en buscarPorId
+                lista.add(partida);
+            }
+        }
         return lista;
     }
 
