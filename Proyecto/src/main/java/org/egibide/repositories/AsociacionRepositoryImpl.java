@@ -15,7 +15,8 @@ public class AsociacionRepositoryImpl implements AsociacionRepository {
     @Override
     public Asociacion getAsociacion(int asociacion_id) {
 
-        return asociacionDao.getAsociacion(asociacion_id);
+        //return asociacionDao.getAsociacion(asociacion_id);
+        return null;
     }
 
     //
