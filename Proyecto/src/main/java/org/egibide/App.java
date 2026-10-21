@@ -26,6 +26,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
+// TODO : Hay que implementar lo que aparezca como "Pendiente"
+
 // TODO : No dejar esta clase con demasiadas líneas; hacer funciones y separar código en diferentes ficheros y carpetas
 
 public class App {
@@ -131,6 +133,7 @@ public class App {
         System.out.println("2. Dar de alta un juego");
         System.out.println("3. Modificar un juego");
         System.out.println("4. Dar de baja un juego");
+        System.out.println("5. Buscar juegos");
         System.out.println("0. Volver al menú principal");
         System.out.print("\nElige una opción: ");
 
@@ -410,6 +413,10 @@ public class App {
                     break;
                 }
 
+                case 5:
+                    menuBusquedaJuegos(sc);
+                    break;
+
                 case 0:
                     break;
 
@@ -432,6 +439,7 @@ public class App {
         System.out.println("3. Dar de alta una socia");
         System.out.println("4. Modificar una socia");
         System.out.println("5. Dar de baja una socia");
+        System.out.println("6. Buscar socias");
         System.out.println("0. Volver al menú principal");
         System.out.print("\nElige una opción: ");
 
@@ -619,6 +627,10 @@ public class App {
                     break;
                 }
 
+                case 6:
+                    menuBusquedaSocias(sc);
+                    break;
+
                 case 0:
                     break;
 
@@ -640,6 +652,7 @@ public class App {
         System.out.println("2. Dar de alta una partida");
         System.out.println("3. Modificar una partida");
         System.out.println("4. Dar de baja una partida");
+        System.out.println("5. Buscar partidas");
         System.out.println("0. Volver al menú principal");
         System.out.print("\nElige una opción: ");
 
@@ -789,6 +802,10 @@ public class App {
                     break;
                 }
 
+                case 5:
+                    menuBusquedaPartidas(sc);
+                    break;
+
                 case 0:
                     break;
 
@@ -802,6 +819,104 @@ public class App {
         } catch (SQLException e) {
             System.out.println("Error en la base de datos: " + e.getMessage());
         }
+    }
+
+    // Submenú de búsqueda de juegos
+    private static void menuBusquedaJuegos(Scanner sc) {
+
+        int opcion;
+
+        do {
+            System.out.println("\n===== BÚSQUEDA DE JUEGOS =====");
+            System.out.println("1. Buscar por nombre");
+            System.out.println("2. Buscar por temática o categoría");
+            System.out.println("3. Buscar por número de jugadores");
+            System.out.println("0. Volver al menú de juegos");
+            System.out.print("\nElige una opción: ");
+
+            opcion = Integer.parseInt(sc.nextLine());
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("Pendiente: buscar juegos por nombre.");
+                    break;
+                case 2:
+                    System.out.println("Pendiente: buscar juegos por temática.");
+                    break;
+                case 3:
+                    System.out.println("Pendiente: buscar juegos por número de jugadores.");
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+        } while (opcion != 0);
+    }
+
+    // Submenú de búsqueda de socias
+    private static void menuBusquedaSocias(Scanner sc) {
+
+        int opcion;
+
+        do {
+            System.out.println("\n===== BÚSQUEDA DE SOCIAS =====");
+            System.out.println("1. Buscar por nombre");
+            System.out.println("2. Buscar por primer apellido");
+            System.out.println("3. Buscar por segundo apellido");
+            System.out.println("0. Volver al menú de socias");
+            System.out.print("\nElige una opción: ");
+
+            opcion = Integer.parseInt(sc.nextLine());
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("Pendiente: buscar socias por nombre.");
+                    break;
+                case 2:
+                    System.out.println("Pendiente: buscar socias por primer apellido.");
+                    break;
+                case 3:
+                    System.out.println("Pendiente: buscar socias por segundo apellido.");
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+        } while (opcion != 0);
+    }
+
+    // Submenú de búsqueda de partidas
+    private static void menuBusquedaPartidas(Scanner sc) {
+
+        int opcion;
+
+        do {
+            System.out.println("\n===== BÚSQUEDA DE PARTIDAS =====");
+            System.out.println("1. Buscar por juego");
+            System.out.println("2. Buscar por fecha");
+            System.out.println("0. Volver al menú de partidas");
+            System.out.print("\nElige una opción: ");
+
+            opcion = Integer.parseInt(sc.nextLine());
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("Pendiente: buscar partidas por juego.");
+                    break;
+                case 2:
+                    System.out.println("Pendiente: buscar partidas por fecha.");
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+        } while (opcion != 0);
     }
 
     // Menú de exportaciones
