@@ -101,14 +101,14 @@ CREATE TABLE `juego` (
 --
 
 INSERT INTO `juego` (`id`, `nombre`, `autor1`, `autor2`, `descripcion`, `min_jugadores`, `max_jugadores`, `duracion`, `tematica`, `competitivo`, `ubicacion`, `estado`, `asociacion_id`, `socia_documento`, `fecha_alta`) VALUES
-(1, 'Monopoly', 'Charles Darrow', NULL, 'Juego de compraventa de propiedades, alquileres y gestión de dinero.', 2, 8, 120, 'Economía', 1, 'Estantería A1', 'disponible', 1, NULL, '2023-01-10'),
-(2, 'Trivial Pursuit', 'Chris Haney', 'Scott Abbott', 'Juego de preguntas de cultura general para conseguir los quesitos.', 2, 6, 60, 'Cultura general', 1, 'Estantería A2', 'disponible', 1, NULL, '2023-02-15'),
-(3, 'UNO', 'Merle Robbins', NULL, 'Juego de cartas en el que hay que quedarse sin cartas antes que los demás.', 2, 10, 20, 'Cartas', 1, 'Estantería B1', 'disponible', 1, NULL, '2023-04-20'),
-(4, 'Scrabble', 'Alfred Mosher Butts', NULL, 'Juego de palabras en el que se consiguen puntos formando palabras con fichas.', 2, 4, 60, 'Palabras', 1, 'Estantería A3', 'disponible', 1, NULL, '2024-01-05'),
-(5, 'Parchís', 'Tradicional', NULL, 'Juego de recorrido en el que hay que llevar las cuatro fichas hasta la meta.', 2, 4, 45, 'Familiar', 1, 'Colección de Lorena', 'disponible', NULL, '12345678A', '2024-03-12'),
-(6, 'Cluedo', 'Anthony E. Pratt', NULL, 'Juego de deducción para descubrir quién cometió el asesinato, dónde y con qué arma.', 2, 6, 60, 'Misterio', 1, 'Colección de Aitor', 'en reparación', NULL, '23456789B', '2024-06-18'),
-(7, 'Risk', 'Albert Lamorisse', NULL, 'Juego de estrategia y conquista territorial mediante ejércitos y dados.', 2, 6, 150, 'Estrategia militar', 1, 'Estantería B2', 'disponible', 1, NULL, '2025-02-01'),
-(8, 'Jenga', 'Leslie Scott', NULL, 'Juego de habilidad en el que se retiran bloques de una torre sin derribarla.', 2, 8, 20, 'Habilidad', 1, 'Estantería C1', 'disponible', 1, NULL, '2025-05-22');
+(1, 'Monopoly', 'Charles Darrow', NULL, 'Juego de compraventa de propiedades, alquileres y gestión de dinero.', 2, 8, 120, 'Economía', 1, 'Estantería 1 (>12 años)', 'disponible', 1, NULL, '2023-01-10'),
+(2, 'Trivial Pursuit', 'Chris Haney', 'Scott Abbott', 'Juego de preguntas de cultura general para conseguir los quesitos.', 2, 6, 60, 'Cultura general', 1, 'Estantería 1 (>12 años)', 'disponible', 1, NULL, '2023-02-15'),
+(3, 'UNO', 'Merle Robbins', NULL, 'Juego de cartas en el que hay que quedarse sin cartas antes que los demás.', 2, 10, 20, 'Cartas', 1, 'Estantería 2 (5-11 años)', 'disponible', 1, NULL, '2023-04-20'),
+(4, 'Scrabble', 'Alfred Mosher Butts', NULL, 'Juego de palabras en el que se consiguen puntos formando palabras con fichas.', 2, 4, 60, 'Palabras', 1, 'Estantería 1 (>12 años)', 'disponible', 1, NULL, '2024-01-05'),
+(5, 'Parchís', 'Tradicional', NULL, 'Juego de recorrido en el que hay que llevar las cuatro fichas hasta la meta.', 2, 4, 45, 'Familiar', 1, 'Estantería 2 (5-11 años)', 'disponible', NULL, '12345678A', '2024-03-12'),
+(6, 'Cluedo', 'Anthony E. Pratt', NULL, 'Juego de deducción para descubrir quién cometió el asesinato, dónde y con qué arma.', 2, 6, 60, 'Misterio', 1, 'Estantería 1 (>12 años)', 'en reparación', NULL, '23456789B', '2024-06-18'),
+(7, 'Risk', 'Albert Lamorisse', NULL, 'Juego de estrategia y conquista territorial mediante ejércitos y dados.', 2, 6, 150, 'Estrategia militar', 1, 'Estantería 1 (>12 años)', 'disponible', 1, NULL, '2025-02-01'),
+(8, 'Jenga', 'Leslie Scott', NULL, 'Juego de habilidad en el que se retiran bloques de una torre sin derribarla.', 2, 8, 20, 'Habilidad', 1, 'Estantería 2 (5-11 años)', 'disponible', 1, NULL, '2025-05-22');
 
 -- --------------------------------------------------------
 

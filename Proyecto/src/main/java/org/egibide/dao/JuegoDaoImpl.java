@@ -1,5 +1,6 @@
 package org.egibide.dao;
 
+import org.egibide.idao.AsociacionDao;
 import org.egibide.idao.JuegoDao;
 import org.egibide.models.Asociacion;
 import org.egibide.models.Juego;
@@ -16,13 +17,16 @@ public class JuegoDaoImpl implements JuegoDao {
 
     @Override
     public List<Juego> listar() throws SQLException {
+        AsociacionDao asociacionDao = new AsociacionDaoImpl();
+
         List<Juego> lista = new ArrayList<>();
         String sql = "SELECT * FROM juego";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        try (PreparedStatement ps = puente.prepareStatement(sql)){
+        try (PreparedStatement ps = puente.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+
+            while (rs.next()) {
                 Juego juego = new Juego();
                 juego.setId(rs.getInt("id"));
                 juego.setNombre(rs.getString("nombre"));
@@ -37,15 +41,16 @@ public class JuegoDaoImpl implements JuegoDao {
                 juego.setUbicacion(rs.getString("ubicacion"));
                 juego.setEstado(rs.getString("estado"));
 
-                int id_Aso = rs.getInt("asociacion_id");
-                if (!rs.wasNull()){
-                    Asociacion asociacion = new Asociacion();
-                    asociacion.setId(id_Aso);
+                // TODO : Corregir esto ya q la propietaria puede ser la asociación o una socia
+                if (!rs.wasNull()) {
+                    // Será la única asociación existente
+                    Asociacion asociacion = asociacionDao.getAsociacion(1);
                     juego.setAsociacionPropietaria(asociacion);
                 }
 
+                juego.setFechaAlta(rs.getDate("fecha_alta").toLocalDate());
 
-
+                lista.add(juego);
             }
         }
         return lista;

@@ -1,6 +1,8 @@
 package org.egibide;
 
+import org.egibide.dao.AsociacionDaoImpl;
 import org.egibide.dao.JuegoDaoImpl;
+import org.egibide.idao.AsociacionDao;
 import org.egibide.idao.JuegoDao;
 import org.egibide.models.Juego;
 import org.egibide.utils.DatabaseConnection;
@@ -59,6 +61,7 @@ public class App {
                 System.out.print("\nElige una opción: ");
 
                 // TODO : En todos los "Integer.parseInt" poner mi función de leerInt y añadir más de esas (así habrá más control de errores)
+                //  También habrá que poner algún tipo de bucle para q si se teclea algo inválido --> Que se peuda volver a poner
                 opcion = Integer.parseInt(sc.nextLine());
 
                 switch (opcion) {
@@ -139,23 +142,27 @@ public class App {
 
         JuegoDao dao = new JuegoDaoImpl();
         SociaDao sociaDao = new SociaDaoImpl();
+        AsociacionDao asociacionDao = new AsociacionDaoImpl();
 
         try {
             int opcion = Integer.parseInt(sc.nextLine());
 
             switch (opcion) {
                 case 1: {
+                    // TODO : Antes de mostrar el listado, que muestre el número total de registros q hay en BD
+
                     List<Juego> juegos = dao.listar();
 
                     if (juegos.isEmpty()) {
-                        // TODO : SALTA AQUÍ AUNQUE HAYA JUEGOS EN LA BD
                         System.out.println("No hay juegos en la base de datos.");
                     } else {
                         for (Juego j : juegos) {
+                            System.out.println("\n");
                             System.out.println("Id: " + j.getId());
                             System.out.println("Nombre: " + j.getNombre());
                             System.out.println("Autor 1: " + j.getAutor1());
                             System.out.println("Autor 2: " + j.getAutor2());
+                            System.out.println("Descripción: " + j.getDescripcion());
                             System.out.println("Jugadores: " + j.getMinJugadores() + " - " + j.getMaxJugadores());
                             System.out.println("Duración: " + j.getDuracion() + " minutos");
                             System.out.println("Temática: " + j.getTematica());
@@ -170,9 +177,9 @@ public class App {
                             System.out.println("Estado: " + j.getEstado());
 
                             if (j.getAsociacionPropietaria() != null) {
-                                System.out.println("Propietaria: la asociación");
+                                System.out.println("Propietaria: La asociación 'Meeple Vitoria'");
                             } else if (j.getSociaPropietaria() != null) {
-                                System.out.println("Propietaria: socia con DNI '" + j.getSociaPropietaria().getDocumento() + "'");
+                                System.out.println("Propietaria: Socia con DNI '" + j.getSociaPropietaria().getDocumento() + "'");
                             }
 
                             System.out.println("Fecha de alta: " + j.getFechaAlta());
@@ -236,6 +243,7 @@ public class App {
                         nuevo.setCompetitivo(false);
                     }
 
+                    // TODO : ¿Igual sería mejor poner por rangos tipo "Mayor que..." (porque si no, se complica para las personas que quieren jugar a algo que en principio solo pueden los niños; por ejemplo el Parchís)?
                     System.out.println("Estantería 1 (>12 años)");
                     System.out.println("Estantería 2 (5-11 años)");
                     System.out.println("Estantería 3 (Infantil)");
@@ -261,9 +269,8 @@ public class App {
                     int propietaria = Integer.parseInt(sc.nextLine());
 
                     if (propietaria == 1) {
-                        // TODO : Tiene q ser la asociación existente (solo va a existir en todo momento 1 en la BD). Habrá q hacer una consulta select.
-                        Asociacion asociacion = new Asociacion();
-                        asociacion.setId(1);
+                        // Como solo va a existir 1 asociación en la BD, tendrá que ser la existente
+                        Asociacion asociacion = asociacionDao.getAsociacion(1);
                         nuevo.setAsociacionPropietaria(asociacion);
                     } else if (propietaria == 2) {
                         System.out.println("Documento de la socia propietaria: ");
@@ -450,8 +457,6 @@ public class App {
 
             switch (opcion) {
                 case 1: {
-                    // TODO : Antes de mostrar el listado, que muestre el número total de registros q hay en BD
-
                     List<Socia> socias = dao.listar();
 
                     if (socias.isEmpty()) {

@@ -3,7 +3,7 @@ Nombre BBDD: juegos
 Esquema: juegos
 Driver: MariaDB Connector/J
 Versión del driver: 3.3.3
-URL: jdbc:mariadb://localhost:3307/juegos?user=root
+URL: jdbc:mariadb://localhost/juegos?user=root
 
 TABLA: asociacion
 Esquema: juegos
