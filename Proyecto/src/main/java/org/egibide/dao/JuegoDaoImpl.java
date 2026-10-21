@@ -2,8 +2,10 @@ package org.egibide.dao;
 
 import org.egibide.idao.AsociacionDao;
 import org.egibide.idao.JuegoDao;
+import org.egibide.idao.SociaDao;
 import org.egibide.models.Asociacion;
 import org.egibide.models.Juego;
+import org.egibide.models.Socia;
 import org.egibide.utils.DatabaseConnection;
 
 import java.sql.Connection;
@@ -41,11 +43,23 @@ public class JuegoDaoImpl implements JuegoDao {
                 juego.setUbicacion(rs.getString("ubicacion"));
                 juego.setEstado(rs.getString("estado"));
 
-                // TODO : Corregir esto ya q la propietaria puede ser la asociación o una socia
+                // Comprobar quién es la propietaria del juego
+                int idAsociacion = rs.getInt("asociacion_id");
+
                 if (!rs.wasNull()) {
-                    // Será la única asociación existente
-                    Asociacion asociacion = asociacionDao.getAsociacion(1);
+                    // El juego pertenece a la asociación
+                    Asociacion asociacion = asociacionDao.getAsociacion(idAsociacion);
                     juego.setAsociacionPropietaria(asociacion);
+
+                } else {
+                    // El juego pertenece a una socia
+                    String documentoSocia = rs.getString("socia_documento");
+
+                    if (documentoSocia != null) {
+                        SociaDao sociaDao = new SociaDaoImpl();
+                        Socia socia = sociaDao.buscarDocumento(documentoSocia);
+                        juego.setSociaPropietaria(socia);
+                    }
                 }
 
                 juego.setFechaAlta(rs.getDate("fecha_alta").toLocalDate());

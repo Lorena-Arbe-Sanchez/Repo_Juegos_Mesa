@@ -51,7 +51,7 @@ public class App {
 
             do {
 
-                System.out.println("\n===== MENÚ PRINCIPAL =====");
+                System.out.println("\n\n===== MENÚ PRINCIPAL =====");
                 System.out.println("1. Gestión de juegos");
                 System.out.println("2. Gestión de socias");
                 System.out.println("3. Gestión de partidas");
@@ -100,6 +100,7 @@ public class App {
     // Mostrar los datos principales de la asociación
     private static void mostrarDatosAsociacion(Connection conexion) throws Exception {
 
+        // TODO : Implementar esto en la clase "AsociacionDaoImpl" correspondiente
         // Con esta consulta se asegura que solo obtenga datos de 1 asociación (aun así en la BD solo habrá 1 guardada)
         String sql = "SELECT * FROM asociacion LIMIT 1";
 
@@ -131,7 +132,7 @@ public class App {
     // Menú de juegos
     private static void menuJuegos(Scanner sc) {
 
-        System.out.println("\n===== GESTIÓN DE JUEGOS =====");
+        System.out.println("\n\n===== GESTIÓN DE JUEGOS =====");
         System.out.println("1. Listar juegos");
         System.out.println("2. Dar de alta un juego");
         System.out.println("3. Modificar un juego");
@@ -149,16 +150,15 @@ public class App {
 
             switch (opcion) {
                 case 1: {
-                    // TODO : Antes de mostrar el listado, que muestre el número total de registros q hay en BD
-
                     List<Juego> juegos = dao.listar();
+
+                    System.out.println("Número total de juegos: " + juegos.size());
 
                     if (juegos.isEmpty()) {
                         System.out.println("No hay juegos en la base de datos.");
                     } else {
                         for (Juego j : juegos) {
-                            System.out.println("\n");
-                            System.out.println("Id: " + j.getId());
+                            System.out.println("\nId: " + j.getId());
                             System.out.println("Nombre: " + j.getNombre());
                             System.out.println("Autor 1: " + j.getAutor1());
                             System.out.println("Autor 2: " + j.getAutor2());
@@ -174,10 +174,12 @@ public class App {
                             }
 
                             System.out.println("Ubicación: " + j.getUbicacion());
+                            // TODO : ¿Se podría poner que empiece en mayúscula (CamelCase)?
                             System.out.println("Estado: " + j.getEstado());
 
+                            // TODO : CORREGIR ~ Si tiene como propietaria a una socia en vez de una asociación --> No la muestra
                             if (j.getAsociacionPropietaria() != null) {
-                                System.out.println("Propietaria: La asociación 'Meeple Vitoria'");
+                                System.out.println("Propietaria: Asociación llamada '" + j.getAsociacionPropietaria().getNombre() + "'");
                             } else if (j.getSociaPropietaria() != null) {
                                 System.out.println("Propietaria: Socia con DNI '" + j.getSociaPropietaria().getDocumento() + "'");
                             }
@@ -440,7 +442,7 @@ public class App {
     // Menú de socias
     private static void menuSocias(Scanner sc) {
 
-        System.out.println("\n===== GESTIÓN DE SOCIAS =====");
+        System.out.println("\n\n===== GESTIÓN DE SOCIAS =====");
         System.out.println("1. Listar socias");
         System.out.println("2. Consultar juegos y partidas de una socia");
         System.out.println("3. Dar de alta una socia");
@@ -459,12 +461,13 @@ public class App {
                 case 1: {
                     List<Socia> socias = dao.listar();
 
+                    System.out.println("Número total de socias: " + socias.size());
+
                     if (socias.isEmpty()) {
                         System.out.println("No hay socias en la base de datos.");
                     } else {
                         for (Socia s : socias) {
-                            System.out.println("\n");
-                            System.out.println("Documento: " + s.getDocumento());
+                            System.out.println("\nDocumento: " + s.getDocumento());
                             System.out.println("Nombre: " + s.getNombre());
                             System.out.println("Apellidos: " + s.getApellido1() + " " + s.getApellido2());
                             System.out.println("Teléfono: " + s.getTelefono());
@@ -652,7 +655,7 @@ public class App {
     // Menú de partidas
     private static void menuPartidas(Scanner sc) {
 
-        System.out.println("\n===== GESTIÓN DE PARTIDAS =====");
+        System.out.println("\n\n===== GESTIÓN DE PARTIDAS =====");
         System.out.println("1. Listar partidas");
         System.out.println("2. Dar de alta una partida");
         System.out.println("3. Modificar una partida");
@@ -671,11 +674,15 @@ public class App {
                 case 1: {
                     List<Partida> partidas = dao.listar();
 
+                    System.out.println("Número total de partidas: " + partidas.size());
+
                     if (partidas.isEmpty()) {
                         System.out.println("No hay partidas en la base de datos.");
                     } else {
                         for (Partida p : partidas) {
-                            System.out.println("Id: " + p.getId());
+                            System.out.println("\nId: " + p.getId());
+
+                            // TODO : No muestra el ID del juego
                             if (p.getJuego() != null) {
                                 System.out.println("Id del juego: " + p.getJuego().getId());
                             }
