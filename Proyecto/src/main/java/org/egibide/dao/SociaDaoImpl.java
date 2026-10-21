@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SociaDaoImpl implements SociaDao {
-    
+
     @Override
     public List<Socia> listar() throws SQLException {
         List<Socia> lista = new ArrayList<>();

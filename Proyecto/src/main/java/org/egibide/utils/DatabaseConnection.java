@@ -13,8 +13,8 @@ public class DatabaseConnection {
         try {
             String driver = "org.mariadb.jdbc.Driver";
             Class.forName(driver);
-            // Normalmente el puerto será "3307" (dependiendo de la configuración de XAMPP puede ser "3306")
-            String url = "jdbc:mariadb://localhost:3306/juegos";
+            // Normalmente el puerto será "3306" (dependiendo de la configuración de XAMPP puede ser "3307")
+            String url = "jdbc:mariadb://localhost:3307/juegos";
             String user = "root";
             String password = "";
             this.connection = DriverManager.getConnection(url, user, password);
