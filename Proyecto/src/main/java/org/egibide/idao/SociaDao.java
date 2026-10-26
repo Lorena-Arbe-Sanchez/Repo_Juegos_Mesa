@@ -9,7 +9,7 @@ public interface SociaDao {
 
     List<Socia> listar() throws SQLException;
     void insertar(Socia socia) throws SQLException;
-    Socia buscarDocumento(String documento);
-    void eliminar (String documento);
-    void actualizar (Socia socia);
+    Socia buscarDocumento(String documento) throws SQLException;
+    void eliminar (String documento) throws SQLException;
+    void actualizar (Socia socia) throws SQLException;
 }
