@@ -1,6 +1,8 @@
 package org.egibide.dao;
 
+import org.egibide.idao.AsociacionDao;
 import org.egibide.idao.JuegoDao;
+import org.egibide.idao.SociaDao;
 import org.egibide.models.Asociacion;
 import org.egibide.models.Juego;
 import org.egibide.models.Socia;
@@ -17,12 +19,14 @@ public class JuegoDaoImpl implements JuegoDao {
 
     @Override
     public List<Juego> listar() throws SQLException {
+        AsociacionDao asociacionDao = new AsociacionDaoImpl();
+
         List<Juego> lista = new ArrayList<>();
         String sql = "SELECT * FROM juego";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        try (PreparedStatement ps = puente.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        try (PreparedStatement ps = puente.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
                 Juego juego = new Juego();
@@ -39,23 +43,28 @@ public class JuegoDaoImpl implements JuegoDao {
                 juego.setUbicacion(rs.getString("ubicacion"));
                 juego.setEstado(rs.getString("estado"));
 
-                // Propietaria: asociación (si es NULL en la BD, no se rellena)
-                int idAsociacion = rs.getInt("asociacion_id");
-                if (!rs.wasNull()) {
-                    Asociacion asociacion = new Asociacion();
-                    asociacion.setId(idAsociacion);
-                    juego.setAsociacionPropietaria(asociacion);
-                }
 
-                // Propietaria: socia (si es NULL en la BD, no se rellena)
-                String documentoSocia = rs.getString("socia_documento");
-                if (documentoSocia != null) {
-                    Socia socia = new Socia();
-                    socia.setDocumento(documentoSocia);
-                    juego.setSociaPropietaria(socia);
+                // Comprobar quién es la propietaria del juego
+                int idAsociacion = rs.getInt("asociacion_id");
+
+                if (!rs.wasNull()) {
+                    // El juego pertenece a la asociación
+                    Asociacion asociacion = asociacionDao.getAsociacion(idAsociacion);
+                    juego.setAsociacionPropietaria(asociacion);
+
+                } else {
+                    // El juego pertenece a una socia
+                    String documentoSocia = rs.getString("socia_documento");
+
+                    if (documentoSocia != null) {
+                        SociaDao sociaDao = new SociaDaoImpl();
+                        Socia socia = sociaDao.buscarDocumento(documentoSocia);
+                        juego.setSociaPropietaria(socia);
+                    }
                 }
 
                 juego.setFechaAlta(rs.getDate("fecha_alta").toLocalDate());
+                
                 lista.add(juego);
             }
         }

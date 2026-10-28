@@ -2,10 +2,18 @@ package org.egibide.idao;
 
 import org.egibide.models.Asociacion;
 
-import java.sql.SQLException;
+import java.util.List;
 
+// AsociacionDao: define las operaciones para gestionar asociaciones.
 public interface AsociacionDao {
 
-    Asociacion obtener() throws SQLException;
-    void actualizar(Asociacion asociacion) throws SQLException;
+    int add(Asociacion asociacion);
+
+    void delete(int id);
+
+    Asociacion getAsociacion(int id);
+
+    List<Asociacion> getAsociaciones();
+
+    boolean update(Asociacion asociacion);
 }

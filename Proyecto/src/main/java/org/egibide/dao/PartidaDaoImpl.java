@@ -98,7 +98,9 @@ public class PartidaDaoImpl implements PartidaDao {
 
     @Override
     public void actualizar(Partida partida) throws SQLException {
-        String sql = "UPDATE partida SET juego_id = ?, fecha = ?, jugadores_deseados = ?, plazas_libres = ? WHERE id = ?";
+
+        String sql = "UPDATE partida SET juego_id = ?, fecha = ?, hora = ?, jugadores_deseados = ?, plazas_libres = ? WHERE id = ?";
+
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
         try (PreparedStatement ps = puente.prepareStatement(sql)){

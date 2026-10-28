@@ -1,13 +1,13 @@
 package org.egibide;
 
+import org.egibide.dao.AsociacionDaoImpl;
 import org.egibide.dao.JuegoDaoImpl;
+import org.egibide.idao.AsociacionDao;
 import org.egibide.idao.JuegoDao;
 import org.egibide.models.Juego;
 import org.egibide.utils.DatabaseConnection;
 import org.egibide.utils.ExportarDatos;
 import org.egibide.utils.MetadatosBD;
-
-// NUEVO: imports añadidos
 import org.egibide.dao.PartidaDaoImpl;
 import org.egibide.dao.SociaDaoImpl;
 import org.egibide.idao.PartidaDao;
@@ -15,17 +15,20 @@ import org.egibide.idao.SociaDao;
 import org.egibide.models.Asociacion;
 import org.egibide.models.Partida;
 import org.egibide.models.Socia;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
-// FIN NUEVO
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 import java.util.List;
 import java.util.Scanner;
+
+// TODO : Hay que implementar lo que aparezca como "Pendiente"
 
 // TODO : No dejar esta clase con demasiadas líneas; hacer funciones y separar código en diferentes ficheros y carpetas
 
@@ -48,7 +51,7 @@ public class App {
 
             do {
 
-                System.out.println("\n===== MENÚ PRINCIPAL =====");
+                System.out.println("\n\n===== MENÚ PRINCIPAL =====");
                 System.out.println("1. Gestión de juegos");
                 System.out.println("2. Gestión de socias");
                 System.out.println("3. Gestión de partidas");
@@ -57,6 +60,8 @@ public class App {
                 System.out.println("0. Salir");
                 System.out.print("\nElige una opción: ");
 
+                // TODO : En todos los "Integer.parseInt" poner mi función de leerInt y añadir más de esas (así habrá más control de errores)
+                //  También habrá que poner algún tipo de bucle para q si se teclea algo inválido --> Que se peuda volver a poner
                 opcion = Integer.parseInt(sc.nextLine());
 
                 switch (opcion) {
@@ -95,6 +100,7 @@ public class App {
     // Mostrar los datos principales de la asociación
     private static void mostrarDatosAsociacion(Connection conexion) throws Exception {
 
+        // TODO : Implementar esto en la clase "AsociacionDaoImpl" correspondiente
         // Con esta consulta se asegura que solo obtenga datos de 1 asociación (aun así en la BD solo habrá 1 guardada)
         String sql = "SELECT * FROM asociacion LIMIT 1";
 
@@ -123,19 +129,21 @@ public class App {
         }
     }
 
-    // MODIFICADO: menú de juegos completo
+    // Menú de juegos
     private static void menuJuegos(Scanner sc) {
 
-        System.out.println("\n===== GESTIÓN DE JUEGOS =====");
+        System.out.println("\n\n===== GESTIÓN DE JUEGOS =====");
         System.out.println("1. Listar juegos");
         System.out.println("2. Dar de alta un juego");
         System.out.println("3. Modificar un juego");
         System.out.println("4. Dar de baja un juego");
+        System.out.println("5. Buscar juegos");
         System.out.println("0. Volver al menú principal");
         System.out.print("\nElige una opción: ");
 
         JuegoDao dao = new JuegoDaoImpl();
         SociaDao sociaDao = new SociaDaoImpl();
+        AsociacionDao asociacionDao = new AsociacionDaoImpl();
 
         try {
             int opcion = Integer.parseInt(sc.nextLine());
@@ -144,14 +152,17 @@ public class App {
                 case 1: {
                     List<Juego> juegos = dao.listar();
 
+                    System.out.println("Número total de juegos: " + juegos.size());
+
                     if (juegos.isEmpty()) {
                         System.out.println("No hay juegos en la base de datos.");
                     } else {
                         for (Juego j : juegos) {
-                            System.out.println("Id: " + j.getId());
+                            System.out.println("\nId: " + j.getId());
                             System.out.println("Nombre: " + j.getNombre());
                             System.out.println("Autor 1: " + j.getAutor1());
                             System.out.println("Autor 2: " + j.getAutor2());
+                            System.out.println("Descripción: " + j.getDescripcion());
                             System.out.println("Jugadores: " + j.getMinJugadores() + " - " + j.getMaxJugadores());
                             System.out.println("Duración: " + j.getDuracion() + " minutos");
                             System.out.println("Temática: " + j.getTematica());
@@ -163,12 +174,14 @@ public class App {
                             }
 
                             System.out.println("Ubicación: " + j.getUbicacion());
+                            // TODO : ¿Se podría poner que empiece en mayúscula (CamelCase)?
                             System.out.println("Estado: " + j.getEstado());
 
+                            // TODO : CORREGIR ~ Si tiene como propietaria a una socia en vez de una asociación --> No la muestra
                             if (j.getAsociacionPropietaria() != null) {
-                                System.out.println("Propietaria: la asociación");
+                                System.out.println("Propietaria: Asociación llamada '" + j.getAsociacionPropietaria().getNombre() + "'");
                             } else if (j.getSociaPropietaria() != null) {
-                                System.out.println("Propietaria: socia " + j.getSociaPropietaria().getDocumento());
+                                System.out.println("Propietaria: Socia con DNI '" + j.getSociaPropietaria().getDocumento() + "'");
                             }
 
                             System.out.println("Fecha de alta: " + j.getFechaAlta());
@@ -201,6 +214,7 @@ public class App {
                     String descripcion = sc.nextLine();
                     nuevo.setDescripcion(descripcion);
 
+                    // TODO : Poner bucle para que en el if de abajo, si da mensaje de error, que se vuelvan a preguntar los números
                     System.out.println("Número mínimo de jugadores: ");
                     int minJugadores = Integer.parseInt(sc.nextLine());
 
@@ -231,6 +245,7 @@ public class App {
                         nuevo.setCompetitivo(false);
                     }
 
+                    // TODO : ¿Igual sería mejor poner por rangos tipo "Mayor que..." (porque si no, se complica para las personas que quieren jugar a algo que en principio solo pueden los niños; por ejemplo el Parchís)?
                     System.out.println("Estantería 1 (>12 años)");
                     System.out.println("Estantería 2 (5-11 años)");
                     System.out.println("Estantería 3 (Infantil)");
@@ -256,8 +271,8 @@ public class App {
                     int propietaria = Integer.parseInt(sc.nextLine());
 
                     if (propietaria == 1) {
-                        Asociacion asociacion = new Asociacion();
-                        asociacion.setId(1);
+                        // Como solo va a existir 1 asociación en la BD, tendrá que ser la existente
+                        Asociacion asociacion = asociacionDao.getAsociacion(1);
                         nuevo.setAsociacionPropietaria(asociacion);
                     } else if (propietaria == 2) {
                         System.out.println("Documento de la socia propietaria: ");
@@ -292,6 +307,7 @@ public class App {
 
                     System.out.println("Escribe los nuevos datos del juego");
 
+                    // TODO : Poner lo de que ya muestre los datos y tal, pero q esta vez los que aparezcan se puedan modificar tal cual; no sobreescribir
                     System.out.println("Nombre: ");
                     juego.setNombre(sc.nextLine());
 
@@ -377,7 +393,7 @@ public class App {
                 }
 
                 case 4: {
-                    System.out.println("Id del juego a dar de baja: ");
+                    System.out.println("Id del juego a eliminar: ");
                     int idBaja = Integer.parseInt(sc.nextLine());
 
                     Juego aBorrar = dao.buscarPorId(idBaja);
@@ -396,6 +412,7 @@ public class App {
                             dao.eliminar(idBaja);
                             System.out.println("Juego eliminado correctamente.");
                         } catch (SQLException e) {
+                            // TODO : Mejor hacer una búsqueda de FKs y si tiene relaciones con otras tablas, pues q no se pueda borrar (antes de intentarlo)
                             System.out.println("No se pudo eliminar el juego. Es posible que tenga partidas asociadas.");
                             System.out.println("Detalle: " + e.getMessage());
                         }
@@ -404,6 +421,10 @@ public class App {
                     }
                     break;
                 }
+
+                case 5:
+                    menuBusquedaJuegos(sc);
+                    break;
 
                 case 0:
                     break;
@@ -417,17 +438,17 @@ public class App {
             System.out.println("Error en la base de datos: " + e.getMessage());
         }
     }
-    // FIN MODIFICADO: menuJuegos
 
-    // MODIFICADO: menú de socias completo
+    // Menú de socias
     private static void menuSocias(Scanner sc) {
 
-        System.out.println("\n===== GESTIÓN DE SOCIAS =====");
+        System.out.println("\n\n===== GESTIÓN DE SOCIAS =====");
         System.out.println("1. Listar socias");
         System.out.println("2. Consultar juegos y partidas de una socia");
         System.out.println("3. Dar de alta una socia");
         System.out.println("4. Modificar una socia");
         System.out.println("5. Dar de baja una socia");
+        System.out.println("6. Buscar socias");
         System.out.println("0. Volver al menú principal");
         System.out.print("\nElige una opción: ");
 
@@ -440,11 +461,13 @@ public class App {
                 case 1: {
                     List<Socia> socias = dao.listar();
 
+                    System.out.println("Número total de socias: " + socias.size());
+
                     if (socias.isEmpty()) {
                         System.out.println("No hay socias en la base de datos.");
                     } else {
                         for (Socia s : socias) {
-                            System.out.println("Documento: " + s.getDocumento());
+                            System.out.println("\nDocumento: " + s.getDocumento());
                             System.out.println("Nombre: " + s.getNombre());
                             System.out.println("Apellidos: " + s.getApellido1() + " " + s.getApellido2());
                             System.out.println("Teléfono: " + s.getTelefono());
@@ -612,6 +635,10 @@ public class App {
                     break;
                 }
 
+                case 6:
+                    menuBusquedaSocias(sc);
+                    break;
+
                 case 0:
                     break;
 
@@ -624,16 +651,16 @@ public class App {
             System.out.println("Error en la base de datos: " + e.getMessage());
         }
     }
-    // FIN MODIFICADO: menuSocias
 
-    // MODIFICADO: menú de partidas completo
+    // Menú de partidas
     private static void menuPartidas(Scanner sc) {
 
-        System.out.println("\n===== GESTIÓN DE PARTIDAS =====");
+        System.out.println("\n\n===== GESTIÓN DE PARTIDAS =====");
         System.out.println("1. Listar partidas");
         System.out.println("2. Dar de alta una partida");
         System.out.println("3. Modificar una partida");
         System.out.println("4. Dar de baja una partida");
+        System.out.println("5. Buscar partidas");
         System.out.println("0. Volver al menú principal");
         System.out.print("\nElige una opción: ");
 
@@ -647,11 +674,15 @@ public class App {
                 case 1: {
                     List<Partida> partidas = dao.listar();
 
+                    System.out.println("Número total de partidas: " + partidas.size());
+
                     if (partidas.isEmpty()) {
                         System.out.println("No hay partidas en la base de datos.");
                     } else {
                         for (Partida p : partidas) {
-                            System.out.println("Id: " + p.getId());
+                            System.out.println("\nId: " + p.getId());
+
+                            // TODO : No muestra el ID del juego
                             if (p.getJuego() != null) {
                                 System.out.println("Id del juego: " + p.getJuego().getId());
                             }
@@ -783,6 +814,10 @@ public class App {
                     break;
                 }
 
+                case 5:
+                    menuBusquedaPartidas(sc);
+                    break;
+
                 case 0:
                     break;
 
@@ -797,7 +832,104 @@ public class App {
             System.out.println("Error en la base de datos: " + e.getMessage());
         }
     }
-    // FIN MODIFICADO: menuPartidas
+
+    // Submenú de búsqueda de juegos
+    private static void menuBusquedaJuegos(Scanner sc) {
+
+        int opcion;
+
+        do {
+            System.out.println("\n===== BÚSQUEDA DE JUEGOS =====");
+            System.out.println("1. Buscar por nombre");
+            System.out.println("2. Buscar por temática o categoría");
+            System.out.println("3. Buscar por número de jugadores");
+            System.out.println("0. Volver al menú de juegos");
+            System.out.print("\nElige una opción: ");
+
+            opcion = Integer.parseInt(sc.nextLine());
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("Pendiente: buscar juegos por nombre.");
+                    break;
+                case 2:
+                    System.out.println("Pendiente: buscar juegos por temática.");
+                    break;
+                case 3:
+                    System.out.println("Pendiente: buscar juegos por número de jugadores.");
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+        } while (opcion != 0);
+    }
+
+    // Submenú de búsqueda de socias
+    private static void menuBusquedaSocias(Scanner sc) {
+
+        int opcion;
+
+        do {
+            System.out.println("\n===== BÚSQUEDA DE SOCIAS =====");
+            System.out.println("1. Buscar por nombre");
+            System.out.println("2. Buscar por primer apellido");
+            System.out.println("3. Buscar por segundo apellido");
+            System.out.println("0. Volver al menú de socias");
+            System.out.print("\nElige una opción: ");
+
+            opcion = Integer.parseInt(sc.nextLine());
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("Pendiente: buscar socias por nombre.");
+                    break;
+                case 2:
+                    System.out.println("Pendiente: buscar socias por primer apellido.");
+                    break;
+                case 3:
+                    System.out.println("Pendiente: buscar socias por segundo apellido.");
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+        } while (opcion != 0);
+    }
+
+    // Submenú de búsqueda de partidas
+    private static void menuBusquedaPartidas(Scanner sc) {
+
+        int opcion;
+
+        do {
+            System.out.println("\n===== BÚSQUEDA DE PARTIDAS =====");
+            System.out.println("1. Buscar por juego");
+            System.out.println("2. Buscar por fecha");
+            System.out.println("0. Volver al menú de partidas");
+            System.out.print("\nElige una opción: ");
+
+            opcion = Integer.parseInt(sc.nextLine());
+
+            switch (opcion) {
+                case 1:
+                    System.out.println("Pendiente: buscar partidas por juego.");
+                    break;
+                case 2:
+                    System.out.println("Pendiente: buscar partidas por fecha.");
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+            }
+
+        } while (opcion != 0);
+    }
 
     // Menú de exportaciones
     private static void menuExportaciones(Scanner sc) throws Exception {
