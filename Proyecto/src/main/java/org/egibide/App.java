@@ -28,8 +28,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-// TODO : Hay que implementar lo que aparezca como "Pendiente"
-
 // TODO : No dejar esta clase con demasiadas líneas; hacer funciones y separar código en diferentes ficheros y carpetas
 
 public class App {
@@ -950,6 +948,7 @@ public class App {
     // Submenú de búsqueda de socias
     private static void menuBusquedaSocias(Scanner sc) {
 
+        SociaDao dao = new SociaDaoImpl();
         int opcion;
 
         do {
@@ -960,25 +959,69 @@ public class App {
             System.out.println("0. Volver al menú de socias");
             System.out.print("\nElige una opción: ");
 
-            opcion = Integer.parseInt(sc.nextLine());
+            try {
+                opcion = Integer.parseInt(sc.nextLine());
 
-            switch (opcion) {
-                case 1:
-                    System.out.println("Pendiente: buscar socias por nombre.");
-                    break;
-                case 2:
-                    System.out.println("Pendiente: buscar socias por primer apellido.");
-                    break;
-                case 3:
-                    System.out.println("Pendiente: buscar socias por segundo apellido.");
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Opción no válida.");
+                switch (opcion) {
+                    case 1: {
+                        System.out.print("Introduce el nombre de la socia: ");
+                        String nombre = sc.nextLine();
+
+                        List<Socia> resultados = dao.buscarPorNombre(nombre);
+                        mostrarResultadosSocias(resultados);
+                        break;
+                    }
+                    case 2: {
+                        System.out.print("Introduce el primer apellido de la socia: ");
+                        String apellido = sc.nextLine();
+
+                        List<Socia> resultados = dao.buscarPorPrimerApellido(apellido);
+                        mostrarResultadosSocias(resultados);
+                        break;
+                    }
+                    case 3: {
+                        System.out.print("Introduce el segundo apellido de la socia: ");
+                        String apellido = sc.nextLine();
+
+                        List<Socia> resultados = dao.buscarPorSegundoApellido(apellido);
+                        mostrarResultadosSocias(resultados);
+                        break;
+                    }
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Opción no válida.");
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Debes introducir un número entero válido.");
+                opcion = -1;
+            } catch (SQLException e) {
+                System.out.println("Error al buscar socias: " + e.getMessage());
+                opcion = -1;
             }
 
         } while (opcion != 0);
+    }
+
+    private static void mostrarResultadosSocias(List<Socia> socias) {
+        System.out.println("\nResultados encontrados: " + socias.size());
+
+        if (socias.isEmpty()) {
+            System.out.println("No se han encontrado socias.");
+            return;
+        }
+
+        for (Socia s : socias) {
+            System.out.println("\nDocumento: " + s.getDocumento());
+            System.out.println("Nombre: " + s.getNombre());
+            System.out.println("Primer apellido: " + s.getApellido1());
+            System.out.println("Segundo apellido: " + s.getApellido2());
+            System.out.println("Teléfono: " + s.getTelefono());
+            System.out.println("Edad: " + s.getEdad());
+            System.out.println("Email: " + s.getEmail());
+            System.out.println("----------------------------");
+        }
     }
 
     // Submenú de búsqueda de partidas

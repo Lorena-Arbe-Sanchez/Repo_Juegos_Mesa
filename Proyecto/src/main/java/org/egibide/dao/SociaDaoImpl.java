@@ -111,4 +111,50 @@ public class SociaDaoImpl implements SociaDao {
             ps.executeUpdate();
         }
     }
+
+    @Override
+    public List<Socia> buscarPorNombre(String nombre) throws SQLException {
+        String sql = "SELECT * FROM socia WHERE LOWER(nombre) LIKE LOWER(?)";
+        return buscarSocias(sql, "%" + nombre + "%");
+    }
+
+    @Override
+    public List<Socia> buscarPorPrimerApellido(String apellido) throws SQLException {
+        String sql = "SELECT * FROM socia WHERE LOWER(apellido1) LIKE LOWER(?)";
+        return buscarSocias(sql, "%" + apellido + "%");
+    }
+
+    @Override
+    public List<Socia> buscarPorSegundoApellido(String apellido) throws SQLException {
+        String sql = "SELECT * FROM socia WHERE LOWER(apellido2) LIKE LOWER(?)";
+        return buscarSocias(sql, "%" + apellido + "%");
+    }
+
+    // Method común para realizar las búsquedas.
+    private List<Socia> buscarSocias(String sql, String valor) throws SQLException {
+        List<Socia> lista = new ArrayList<>();
+
+        Connection puente = DatabaseConnection.getInstance().getConnection();
+
+        try (PreparedStatement ps = puente.prepareStatement(sql)) {
+            ps.setString(1, valor);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Socia socia = new Socia();
+                    socia.setDocumento(rs.getString("documento"));
+                    socia.setNombre(rs.getString("nombre"));
+                    socia.setApellido1(rs.getString("apellido1"));
+                    socia.setApellido2(rs.getString("apellido2"));
+                    socia.setTelefono(rs.getString("telefono"));
+                    socia.setEdad(rs.getInt("edad"));
+                    socia.setEmail(rs.getString("email"));
+
+                    lista.add(socia);
+                }
+            }
+        }
+
+        return lista;
+    }
 }
