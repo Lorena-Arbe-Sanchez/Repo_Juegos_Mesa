@@ -836,6 +836,7 @@ public class App {
     // Submenú de búsqueda de juegos
     private static void menuBusquedaJuegos(Scanner sc) {
 
+        JuegoDao dao = new JuegoDaoImpl();
         int opcion;
 
         do {
@@ -846,25 +847,104 @@ public class App {
             System.out.println("0. Volver al menú de juegos");
             System.out.print("\nElige una opción: ");
 
-            opcion = Integer.parseInt(sc.nextLine());
+            try {
+                opcion = Integer.parseInt(sc.nextLine());
 
-            switch (opcion) {
-                case 1:
-                    System.out.println("Pendiente: buscar juegos por nombre.");
-                    break;
-                case 2:
-                    System.out.println("Pendiente: buscar juegos por temática.");
-                    break;
-                case 3:
-                    System.out.println("Pendiente: buscar juegos por número de jugadores.");
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Opción no válida.");
+                switch (opcion) {
+
+                    case 1: {
+                        System.out.print("Introduce el nombre del juego: ");
+                        String nombre = sc.nextLine();
+
+                        List<Juego> resultados = dao.buscarPorNombre(nombre);
+                        mostrarResultadosJuegos(resultados);
+                        break;
+                    }
+
+                    case 2: {
+                        System.out.print("Introduce la temática del juego: ");
+                        String tematica = sc.nextLine();
+
+                        List<Juego> resultados = dao.buscarPorTematica(tematica);
+                        mostrarResultadosJuegos(resultados);
+                        break;
+                    }
+
+                    case 3: {
+                        System.out.print("Introduce el número de jugadores: ");
+                        int numero = Integer.parseInt(sc.nextLine());
+
+                        if (numero <= 0) {
+                            System.out.println("El número de jugadores debe ser mayor que 0.");
+                            break;
+                        }
+
+                        List<Juego> resultados = dao.buscarPorNumeroJugadores(numero);
+                        mostrarResultadosJuegos(resultados);
+                        break;
+                    }
+
+                    case 0:
+                        break;
+
+                    default:
+                        System.out.println("Opción no válida.");
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Debes introducir un número entero válido.");
+                opcion = -1;
+
+            } catch (SQLException e) {
+                System.out.println("Error al buscar juegos: " + e.getMessage());
+                opcion = -1;
             }
 
         } while (opcion != 0);
+    }
+
+    // Mostrar los resultados de una búsqueda
+    private static void mostrarResultadosJuegos(List<Juego> juegos) {
+
+        System.out.println("\nResultados encontrados: " + juegos.size());
+
+        if (juegos.isEmpty()) {
+            System.out.println("No se han encontrado juegos.");
+            return;
+        }
+
+        for (Juego j : juegos) {
+
+            System.out.println("\nId: " + j.getId());
+            System.out.println("Nombre: " + j.getNombre());
+            System.out.println("Autor 1: " + j.getAutor1());
+            System.out.println("Autor 2: " + j.getAutor2());
+            System.out.println("Descripción: " + j.getDescripcion());
+            System.out.println("Jugadores: " + j.getMinJugadores() + " - " + j.getMaxJugadores());
+            System.out.println("Duración: " + j.getDuracion() + " minutos");
+            System.out.println("Temática: " + j.getTematica());
+
+            if (j.isCompetitivo()) {
+                System.out.println("Tipo: Competitivo");
+            } else {
+                System.out.println("Tipo: Cooperativo");
+            }
+
+            System.out.println("Ubicación: " + j.getUbicacion());
+            System.out.println("Estado: " + j.getEstado());
+
+            if (j.getAsociacionPropietaria() != null) {
+                System.out.println("Propietaria: Asociación llamada '"
+                        + j.getAsociacionPropietaria().getNombre() + "'");
+
+            } else if (j.getSociaPropietaria() != null) {
+                System.out.println("Propietaria: Socia con DNI '"
+                        + j.getSociaPropietaria().getDocumento() + "'");
+            }
+
+            System.out.println("Fecha de alta: " + j.getFechaAlta());
+            System.out.println("----------------------------");
+        }
     }
 
     // Submenú de búsqueda de socias

@@ -15,6 +15,7 @@ public class PartidaDaoImpl implements PartidaDao {
 
     @Override
     public List<Partida> listar() throws SQLException {
+
         List<Partida> lista = new ArrayList<>();
         String sql = "SELECT * FROM partida";
         Connection puente = DatabaseConnection.getInstance().getConnection();
@@ -51,8 +52,8 @@ public class PartidaDaoImpl implements PartidaDao {
             ps.setInt(5, partida.getPlazasLibres());
             ps.executeUpdate();
 
-            try (ResultSet rs = ps.getGeneratedKeys()){
-                if (rs.next()){
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
                     return rs.getInt(1);
                 }
             }
@@ -62,14 +63,15 @@ public class PartidaDaoImpl implements PartidaDao {
 
     @Override
     public Partida buscarporId(int id) throws SQLException {
+
         String sql = "SELECT * FROM partida WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        try (PreparedStatement ps = puente.prepareStatement(sql)){
-            ps.setInt(1,id);
+        try (PreparedStatement ps = puente.prepareStatement(sql)) {
+            ps.setInt(1, id);
 
-            try (ResultSet rs = ps.executeQuery()){
-                if (rs.next()){
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
                     Partida partida = new Partida();
                     partida.setId(rs.getInt("id"));
                     partida.setFecha(rs.getDate("fecha").toLocalDate());
@@ -87,11 +89,12 @@ public class PartidaDaoImpl implements PartidaDao {
     //ambos solo hacen la accion, no devuelven nada mas:
     @Override
     public void eliminar(int id) throws SQLException {
+
         String sql = "DELETE FROM partida WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        try (PreparedStatement ps = puente.prepareStatement(sql)){
-            ps.setInt(1,id);
+        try (PreparedStatement ps = puente.prepareStatement(sql)) {
+            ps.setInt(1, id);
             ps.executeUpdate();
         }
     }
@@ -100,10 +103,9 @@ public class PartidaDaoImpl implements PartidaDao {
     public void actualizar(Partida partida) throws SQLException {
 
         String sql = "UPDATE partida SET juego_id = ?, fecha = ?, hora = ?, jugadores_deseados = ?, plazas_libres = ? WHERE id = ?";
-
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        try (PreparedStatement ps = puente.prepareStatement(sql)){
+        try (PreparedStatement ps = puente.prepareStatement(sql)) {
             ps.setInt(1, partida.getJuego().getId());
             ps.setDate(2, java.sql.Date.valueOf(partida.getFecha()));
             ps.setTime(3, java.sql.Time.valueOf(partida.getHora()));

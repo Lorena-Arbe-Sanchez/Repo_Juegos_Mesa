@@ -15,6 +15,7 @@ public class SociaDaoImpl implements SociaDao {
 
     @Override
     public List<Socia> listar() throws SQLException {
+
         List<Socia> lista = new ArrayList<>();
         String sql = "SELECT * FROM socia";
         Connection puente = DatabaseConnection.getInstance().getConnection();
@@ -37,9 +38,9 @@ public class SociaDaoImpl implements SociaDao {
         return lista;
     }
 
-    // El documento lo escribe la persona, así que no hay id generado que devolver (void)
     @Override
     public void insertar(Socia socia) throws SQLException {
+
         String sql = "INSERT INTO socia (documento, nombre, apellido1, apellido2, telefono, edad, email) VALUES (?, ?, ?, ?, ?, ?, ?)";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
@@ -57,6 +58,7 @@ public class SociaDaoImpl implements SociaDao {
 
     @Override
     public Socia buscarDocumento(String documento) throws SQLException {
+
         String sql = "SELECT * FROM socia WHERE documento = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
@@ -80,9 +82,9 @@ public class SociaDaoImpl implements SociaDao {
         return null;
     }
 
-    // ambos solo hacen la acción, no devuelven nada más:
     @Override
     public void eliminar(String documento) throws SQLException {
+
         String sql = "DELETE FROM socia WHERE documento = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
@@ -94,6 +96,7 @@ public class SociaDaoImpl implements SociaDao {
 
     @Override
     public void actualizar(Socia socia) throws SQLException {
+
         String sql = "UPDATE socia SET nombre = ?, apellido1 = ?, apellido2 = ?, telefono = ?, edad = ?, email = ? WHERE documento = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
