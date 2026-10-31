@@ -1005,6 +1005,7 @@ public class App {
     }
 
     private static void mostrarResultadosSocias(List<Socia> socias) {
+
         System.out.println("\nResultados encontrados: " + socias.size());
 
         if (socias.isEmpty()) {
@@ -1027,6 +1028,7 @@ public class App {
     // Submenú de búsqueda de partidas
     private static void menuBusquedaPartidas(Scanner sc) {
 
+        PartidaDao dao = new PartidaDaoImpl();
         int opcion;
 
         do {
@@ -1036,22 +1038,68 @@ public class App {
             System.out.println("0. Volver al menú de partidas");
             System.out.print("\nElige una opción: ");
 
-            opcion = Integer.parseInt(sc.nextLine());
+            try {
+                opcion = Integer.parseInt(sc.nextLine());
 
-            switch (opcion) {
-                case 1:
-                    System.out.println("Pendiente: buscar partidas por juego.");
-                    break;
-                case 2:
-                    System.out.println("Pendiente: buscar partidas por fecha.");
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Opción no válida.");
+                switch (opcion) {
+                    case 1: {
+                        System.out.print("Introduce el nombre del juego: ");
+                        String nombreJuego = sc.nextLine();
+
+                        List<Partida> resultados = dao.buscarPorJuego(nombreJuego);
+                        mostrarResultadosPartidas(resultados);
+                        break;
+                    }
+                    case 2: {
+                        System.out.print("Introduce la fecha (AAAA-MM-DD): ");
+                        LocalDate fecha = LocalDate.parse(sc.nextLine());
+
+                        List<Partida> resultados = dao.buscarPorFecha(fecha);
+                        mostrarResultadosPartidas(resultados);
+                        break;
+                    }
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Opción no válida.");
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Debes introducir un número entero válido.");
+                opcion = -1;
+            } catch (DateTimeParseException e) {
+                System.out.println("La fecha debe tener el formato AAAA-MM-DD.");
+                opcion = -1;
+            } catch (SQLException e) {
+                System.out.println("Error al buscar partidas: " + e.getMessage());
+                opcion = -1;
             }
 
         } while (opcion != 0);
+    }
+
+    private static void mostrarResultadosPartidas(List<Partida> partidas) {
+
+        System.out.println("\nResultados encontrados: " + partidas.size());
+
+        if (partidas.isEmpty()) {
+            System.out.println("No se han encontrado partidas.");
+            return;
+        }
+
+        for (Partida p : partidas) {
+            System.out.println("\nId: " + p.getId());
+
+            if (p.getJuego() != null) {
+                System.out.println("Juego: " + p.getJuego().getNombre());
+            }
+
+            System.out.println("Fecha: " + p.getFecha());
+            System.out.println("Hora: " + p.getHora());
+            System.out.println("Jugadores deseados: " + p.getJugadoresDeseados());
+            System.out.println("Plazas libres: " + p.getPlazasLibres());
+            System.out.println("----------------------------");
+        }
     }
 
     // Menú de exportaciones
