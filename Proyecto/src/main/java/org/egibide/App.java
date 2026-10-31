@@ -129,687 +129,707 @@ public class App {
     // Menú de juegos
     private static void menuJuegos(Scanner sc) {
 
-        System.out.println("\n\n===== GESTIÓN DE JUEGOS =====");
-        System.out.println("1. Listar juegos");
-        System.out.println("2. Dar de alta un juego");
-        System.out.println("3. Modificar un juego");
-        System.out.println("4. Dar de baja un juego");
-        System.out.println("5. Buscar juegos");
-        System.out.println("0. Volver al menú principal");
-        System.out.print("\nElige una opción: ");
-
         JuegoDao dao = new JuegoDaoImpl();
         SociaDao sociaDao = new SociaDaoImpl();
         AsociacionDao asociacionDao = new AsociacionDaoImpl();
 
-        try {
-            int opcion = leerInt(sc);
+        int opcion;
 
-            switch (opcion) {
-                case 1: {
-                    List<Juego> juegos = dao.listar();
+        do {
 
-                    System.out.println("Número total de juegos: " + juegos.size());
+            System.out.println("\n\n===== GESTIÓN DE JUEGOS =====");
+            System.out.println("1. Listar juegos");
+            System.out.println("2. Dar de alta un juego");
+            System.out.println("3. Modificar un juego");
+            System.out.println("4. Dar de baja un juego");
+            System.out.println("5. Buscar juegos");
+            System.out.println("0. Volver al menú principal");
+            System.out.print("\nElige una opción: ");
 
-                    if (juegos.isEmpty()) {
-                        System.out.println("No hay juegos en la base de datos.");
-                    } else {
-                        for (Juego j : juegos) {
-                            System.out.println("\nId: " + j.getId());
-                            System.out.println("Nombre: " + j.getNombre());
-                            System.out.println("Autor 1: " + j.getAutor1());
-                            // Si devuelve "null" de la base de datos, mostrará un texto fijo
-                            System.out.println("Autor 2: " + (j.getAutor2() != null ? j.getAutor2() : "(No tiene segundo autor)"));
-                            System.out.println("Descripción: " + j.getDescripcion());
-                            System.out.println("Jugadores: " + j.getMinJugadores() + " - " + j.getMaxJugadores());
-                            System.out.println("Duración: " + j.getDuracion() + " minutos");
-                            System.out.println("Temática: " + j.getTematica());
+            try {
+                opcion = leerInt(sc);
 
-                            if (j.isCompetitivo()) {
-                                System.out.println("Tipo: Competitivo");
-                            } else {
-                                System.out.println("Tipo: Cooperativo");
+                switch (opcion) {
+                    case 1: {
+                        List<Juego> juegos = dao.listar();
+
+                        System.out.println("Número total de juegos: " + juegos.size());
+
+                        if (juegos.isEmpty()) {
+                            System.out.println("No hay juegos en la base de datos.");
+                        } else {
+                            for (Juego j : juegos) {
+                                System.out.println("\nId: " + j.getId());
+                                System.out.println("Nombre: " + j.getNombre());
+                                System.out.println("Autor 1: " + j.getAutor1());
+                                // Si devuelve "null" de la base de datos, mostrará un texto fijo
+                                System.out.println("Autor 2: " + (j.getAutor2() != null ? j.getAutor2() : "(No tiene segundo autor)"));
+                                System.out.println("Descripción: " + j.getDescripcion());
+                                System.out.println("Jugadores: " + j.getMinJugadores() + " - " + j.getMaxJugadores());
+                                System.out.println("Duración: " + j.getDuracion() + " minutos");
+                                System.out.println("Temática: " + j.getTematica());
+
+                                if (j.isCompetitivo()) {
+                                    System.out.println("Tipo: Competitivo");
+                                } else {
+                                    System.out.println("Tipo: Cooperativo");
+                                }
+
+                                System.out.println("Ubicación: " + j.getUbicacion());
+
+                                String estado = j.getEstado();
+                                // Obtener el estado con la primera letra en mayúscula
+                                estado = estado.substring(0, 1).toUpperCase() + estado.substring(1).toLowerCase();
+
+                                System.out.println("Estado: " + estado);
+
+                                // TODO : CORREGIR ~ Si tiene como propietaria a una socia en vez de una asociación --> No la muestra
+                                if (j.getAsociacionPropietaria() != null) {
+                                    System.out.println("Propietaria: Asociación llamada '" + j.getAsociacionPropietaria().getNombre() + "'");
+                                } else if (j.getSociaPropietaria() != null) {
+                                    System.out.println("Propietaria: Socia con DNI '" + j.getSociaPropietaria().getDocumento() + "'");
+                                }
+
+                                System.out.println("Fecha de alta: " + j.getFechaAlta());
+                                System.out.println("----------------------------");
                             }
-
-                            System.out.println("Ubicación: " + j.getUbicacion());
-
-                            String estado = j.getEstado();
-                            // Obtener el estado con la primera letra en mayúscula
-                            estado = estado.substring(0, 1).toUpperCase() + estado.substring(1).toLowerCase();
-
-                            System.out.println("Estado: " + estado);
-
-                            // TODO : CORREGIR ~ Si tiene como propietaria a una socia en vez de una asociación --> No la muestra
-                            if (j.getAsociacionPropietaria() != null) {
-                                System.out.println("Propietaria: Asociación llamada '" + j.getAsociacionPropietaria().getNombre() + "'");
-                            } else if (j.getSociaPropietaria() != null) {
-                                System.out.println("Propietaria: Socia con DNI '" + j.getSociaPropietaria().getDocumento() + "'");
-                            }
-
-                            System.out.println("Fecha de alta: " + j.getFechaAlta());
-                            System.out.println("----------------------------");
                         }
-                    }
-                    break;
-                }
-
-                case 2: {
-                    Juego nuevo = new Juego();
-
-                    String nombre = leerTexto(sc, "Nombre del juego: ");
-                    nuevo.setNombre(nombre);
-
-                    String autor1 = leerTexto(sc, "Primer autor del juego: ");
-                    nuevo.setAutor1(autor1);
-
-                    System.out.println("Segundo autor del juego (deja vacío si no hay): ");
-                    String autor2 = sc.nextLine().trim();
-                    if (autor2.isEmpty()) {
-                        nuevo.setAutor2(null);
-                    } else {
-                        nuevo.setAutor2(autor2);
-                    }
-
-                    String descripcion = leerTexto(sc, "Descripción del juego: ");
-                    nuevo.setDescripcion(descripcion);
-
-                    // TODO : Poner bucle para que en el if de abajo, si da mensaje de error, que se vuelvan a preguntar los números
-
-                    // TODO : Comprobar en todo lo relacionado con "Número de jugadores" que sea mayor que 0
-                    System.out.println("Número mínimo de jugadores: ");
-                    int minJugadores = leerInt(sc);
-
-                    System.out.println("Número máximo de jugadores: ");
-                    int maxJugadores = leerInt(sc);
-
-                    if (maxJugadores < minJugadores) {
-                        System.out.println("El máximo no puede ser menor que el mínimo. No se ha dado de alta el juego.");
-                        break;
-                    }
-                    nuevo.setMinJugadores(minJugadores);
-                    nuevo.setMaxJugadores(maxJugadores);
-
-                    // TODO : Comprobar en todo lo relacionado con "Duración" que sea mayor que 0
-                    System.out.println("Duración del juego (minutos): ");
-                    int duracion = leerInt(sc);
-                    nuevo.setDuracion(duracion);
-
-                    String tematica = leerTexto(sc, "Temática del juego: ");
-                    nuevo.setTematica(tematica);
-
-                    // TODO : Comprobar en todo lo relacionado con "Competitivo / Cooperativo" que sea 0 o 1
-                    System.out.println("Competitivo = 1 | Cooperativo = 0");
-                    System.out.println("Escoge un número: ");
-                    int competitivo = leerInt(sc);
-                    if (competitivo == 1) {
-                        nuevo.setCompetitivo(true);
-                    } else {
-                        nuevo.setCompetitivo(false);
-                    }
-
-                    // TODO : ¿Igual sería mejor poner por rangos tipo "Mayor que..." (porque si no, se complica para las personas que quieren jugar a algo que en principio solo pueden los niños; por ejemplo el Parchís)?
-                    System.out.println("Estantería 1 (>12 años)");
-                    System.out.println("Estantería 2 (5-11 años)");
-                    System.out.println("Estantería 3 (Infantil)");
-                    System.out.println("Escoge la estantería: ");
-                    int ubicacion = leerInt(sc);
-
-                    if (ubicacion == 1) {
-                        nuevo.setUbicacion("Estantería 1 (>12 años)");
-                    } else if (ubicacion == 2) {
-                        nuevo.setUbicacion("Estantería 2 (5-11 años)");
-                    } else if (ubicacion == 3) {
-                        nuevo.setUbicacion("Estantería 3 (Infantil)");
-                    } else {
-                        System.out.println("Estantería no válida. No se ha dado de alta el juego.");
                         break;
                     }
 
-                    nuevo.setEstado("disponible");
-                    nuevo.setFechaAlta(LocalDate.now());
+                    case 2: {
+                        Juego nuevo = new Juego();
 
-                    System.out.println("Propietaria del juego: 1 = Asociación | 2 = Socia");
-                    System.out.println("Escoge un número: ");
-                    int propietaria = leerInt(sc);
+                        String nombre = leerTexto(sc, "Nombre del juego: ");
+                        nuevo.setNombre(nombre);
 
-                    if (propietaria == 1) {
-                        // Como solo va a existir 1 asociación en la BD, tendrá que ser la existente
-                        Asociacion asociacion = asociacionDao.getAsociacion(1);
-                        nuevo.setAsociacionPropietaria(asociacion);
-                    } else if (propietaria == 2) {
-                        String documento = leerTexto(sc, "Documento de la socia propietaria: ");
-                        Socia socia = sociaDao.buscarDocumento(documento);
+                        String autor1 = leerTexto(sc, "Primer autor del juego: ");
+                        nuevo.setAutor1(autor1);
 
-                        if (socia == null) {
-                            System.out.println("No existe ninguna socia con ese documento. No se ha dado de alta el juego.");
+                        System.out.println("Segundo autor del juego (deja vacío si no hay): ");
+                        String autor2 = sc.nextLine().trim();
+                        if (autor2.isEmpty()) {
+                            nuevo.setAutor2(null);
+                        } else {
+                            nuevo.setAutor2(autor2);
+                        }
+
+                        String descripcion = leerTexto(sc, "Descripción del juego: ");
+                        nuevo.setDescripcion(descripcion);
+
+                        // TODO : Poner bucle para que en el if de abajo, si da mensaje de error, que se vuelvan a preguntar los números
+
+                        // TODO : Comprobar en todo lo relacionado con "Número de jugadores" que sea mayor que 0 y que el máximo no puede ser menor que el mínimo
+                        // TODO : En las funciones de "Comprobar" hay que hacerlo a la hora de insertar y modificar
+                        System.out.println("Número mínimo de jugadores: ");
+                        int minJugadores = leerInt(sc);
+
+                        System.out.println("Número máximo de jugadores: ");
+                        int maxJugadores = leerInt(sc);
+
+                        if (maxJugadores < minJugadores) {
+                            System.out.println("El máximo no puede ser menor que el mínimo. No se ha dado de alta el juego.");
                             break;
                         }
-                        nuevo.setSociaPropietaria(socia);
-                    } else {
-                        System.out.println("Opción no válida. No se ha dado de alta el juego.");
-                        break;
-                    }
+                        nuevo.setMinJugadores(minJugadores);
+                        nuevo.setMaxJugadores(maxJugadores);
 
-                    dao.insertar(nuevo);
-                    System.out.println("Juego dado de alta correctamente.");
-                    break;
-                }
+                        // TODO : Comprobar en todo lo relacionado con "Duración" que sea mayor que 0
+                        System.out.println("Duración del juego (minutos): ");
+                        int duracion = leerInt(sc);
+                        nuevo.setDuracion(duracion);
 
-                case 3: {
-                    System.out.println("Id del juego a modificar: ");
-                    int idModificar = leerInt(sc);
+                        String tematica = leerTexto(sc, "Temática del juego: ");
+                        nuevo.setTematica(tematica);
 
-                    Juego juego = dao.buscarPorId(idModificar);
-
-                    if (juego == null) {
-                        System.out.println("No existe ningún juego con ese id.");
-                        break;
-                    }
-
-                    System.out.println("Escribe los nuevos datos del juego");
-
-                    // TODO : Poner lo de que ya muestre los datos y tal, pero q esta vez los que aparezcan se puedan modificar tal cual; no sobreescribir
-                    juego.setNombre(leerTexto(sc, "Nombre: "));
-
-                    juego.setAutor1(leerTexto(sc, "Primer autor: "));
-
-                    System.out.println("Segundo autor (deja vacío si no hay): ");
-                    String autor2Nuevo = sc.nextLine().trim();
-                    if (autor2Nuevo.isEmpty()) {
-                        juego.setAutor2(null);
-                    } else {
-                        juego.setAutor2(autor2Nuevo);
-                    }
-
-                    juego.setDescripcion(leerTexto(sc, "Descripción: "));
-
-                    System.out.println("Número mínimo de jugadores: ");
-                    int minNuevo = leerInt(sc);
-
-                    System.out.println("Número máximo de jugadores: ");
-                    int maxNuevo = leerInt(sc);
-
-                    if (maxNuevo < minNuevo) {
-                        System.out.println("El máximo no puede ser menor que el mínimo. No se ha modificado el juego.");
-                        break;
-                    }
-                    juego.setMinJugadores(minNuevo);
-                    juego.setMaxJugadores(maxNuevo);
-
-                    System.out.println("Duración (minutos): ");
-                    juego.setDuracion(leerInt(sc));
-
-                    System.out.println("Temática: ");
-                    juego.setTematica(leerTexto(sc, ""));
-
-                    System.out.println("Competitivo = 1 | Cooperativo = 0");
-                    System.out.println("Escoge un número: ");
-                    int competitivoNuevo = leerInt(sc);
-                    if (competitivoNuevo == 1) {
-                        juego.setCompetitivo(true);
-                    } else {
-                        juego.setCompetitivo(false);
-                    }
-
-                    System.out.println("Estantería 1 (>12 años)");
-                    System.out.println("Estantería 2 (5-11 años)");
-                    System.out.println("Estantería 3 (Infantil)");
-                    System.out.println("Escoge la estantería: ");
-                    int ubicacionNueva = leerInt(sc);
-
-                    if (ubicacionNueva == 1) {
-                        juego.setUbicacion("Estantería 1 (>12 años)");
-                    } else if (ubicacionNueva == 2) {
-                        juego.setUbicacion("Estantería 2 (5-11 años)");
-                    } else if (ubicacionNueva == 3) {
-                        juego.setUbicacion("Estantería 3 (Infantil)");
-                    } else {
-                        System.out.println("Estantería no válida. No se ha modificado el juego.");
-                        break;
-                    }
-
-                    System.out.println("1. Disponible");
-                    System.out.println("2. Prestado");
-                    System.out.println("3. En reparación");
-                    System.out.println("Escoge el estado: ");
-                    int estadoNuevo = leerInt(sc);
-
-                    if (estadoNuevo == 1) {
-                        juego.setEstado("disponible");
-                    } else if (estadoNuevo == 2) {
-                        juego.setEstado("prestado");
-                    } else if (estadoNuevo == 3) {
-                        juego.setEstado("en reparación");
-                    } else {
-                        System.out.println("Estado no válido. No se ha modificado el juego.");
-                        break;
-                    }
-
-                    dao.actualizar(juego);
-                    System.out.println("Juego modificado correctamente.");
-                    break;
-                }
-
-                case 4: {
-                    System.out.println("Id del juego a eliminar: ");
-                    int idBaja = leerInt(sc);
-
-                    Juego aBorrar = dao.buscarPorId(idBaja);
-
-                    if (aBorrar == null) {
-                        System.out.println("No existe ningún juego con ese id.");
-                        break;
-                    }
-
-                    System.out.println("Vas a eliminar el juego: " + aBorrar.getNombre());
-                    String respuesta = leerTexto(sc, "¿Seguro? (s/n): ");
-
-                    if (respuesta.equalsIgnoreCase("s")) {
-                        try {
-                            dao.eliminar(idBaja);
-                            System.out.println("Juego eliminado correctamente.");
-                        } catch (SQLException e) {
-                            // TODO : Mejor hacer una búsqueda de FKs y si tiene relaciones con otras tablas, pues q no se pueda borrar (antes de intentarlo)
-                            System.out.println("No se pudo eliminar el juego. Es posible que tenga partidas asociadas.");
-                            System.out.println("Detalle: " + e.getMessage());
+                        // TODO : Comprobar en todo lo relacionado con "Competitivo / Cooperativo" que sea 0 o 1
+                        System.out.println("Competitivo = 1 | Cooperativo = 0");
+                        System.out.println("Escoge un número: ");
+                        int competitivo = leerInt(sc);
+                        if (competitivo == 1) {
+                            nuevo.setCompetitivo(true);
+                        } else {
+                            nuevo.setCompetitivo(false);
                         }
-                    } else {
-                        System.out.println("Operación cancelada.");
+
+                        // TODO : ¿Igual sería mejor poner por rangos tipo "Mayor que..." (porque si no, se complica para las personas que quieren jugar a algo que en principio solo pueden los niños; por ejemplo el Parchís)?
+                        System.out.println("Estantería 1 (>12 años)");
+                        System.out.println("Estantería 2 (5-11 años)");
+                        System.out.println("Estantería 3 (Infantil)");
+                        System.out.println("Escoge la estantería: ");
+                        int ubicacion = leerInt(sc);
+
+                        if (ubicacion == 1) {
+                            nuevo.setUbicacion("Estantería 1 (>12 años)");
+                        } else if (ubicacion == 2) {
+                            nuevo.setUbicacion("Estantería 2 (5-11 años)");
+                        } else if (ubicacion == 3) {
+                            nuevo.setUbicacion("Estantería 3 (Infantil)");
+                        } else {
+                            System.out.println("Estantería no válida. No se ha dado de alta el juego.");
+                            break;
+                        }
+
+                        nuevo.setEstado("disponible");
+                        nuevo.setFechaAlta(LocalDate.now());
+
+                        System.out.println("Propietaria del juego: 1 = Asociación | 2 = Socia");
+                        System.out.println("Escoge un número: ");
+                        int propietaria = leerInt(sc);
+
+                        if (propietaria == 1) {
+                            // Como solo va a existir 1 asociación en la BD, tendrá que ser la existente
+                            Asociacion asociacion = asociacionDao.getAsociacion(1);
+                            nuevo.setAsociacionPropietaria(asociacion);
+                        } else if (propietaria == 2) {
+                            String documento = leerTexto(sc, "Documento de la socia propietaria: ");
+                            Socia socia = sociaDao.buscarDocumento(documento);
+
+                            if (socia == null) {
+                                System.out.println("No existe ninguna socia con ese documento. No se ha dado de alta el juego.");
+                                break;
+                            }
+                            nuevo.setSociaPropietaria(socia);
+                        } else {
+                            System.out.println("Opción no válida. No se ha dado de alta el juego.");
+                            break;
+                        }
+
+                        dao.insertar(nuevo);
+                        System.out.println("Juego dado de alta correctamente.");
+                        break;
                     }
-                    break;
+
+                    case 3: {
+                        System.out.println("Id del juego a modificar: ");
+                        int idModificar = leerInt(sc);
+
+                        Juego juego = dao.buscarPorId(idModificar);
+
+                        if (juego == null) {
+                            System.out.println("No existe ningún juego con ese id.");
+                            break;
+                        }
+
+                        System.out.println("Escribe los nuevos datos del juego");
+
+                        // TODO : Poner lo de que ya muestre los datos y tal, pero q esta vez los que aparezcan se puedan modificar tal cual; no sobreescribir
+                        juego.setNombre(leerTexto(sc, "Nombre: "));
+
+                        juego.setAutor1(leerTexto(sc, "Primer autor: "));
+
+                        System.out.println("Segundo autor (deja vacío si no hay): ");
+                        String autor2Nuevo = sc.nextLine().trim();
+                        if (autor2Nuevo.isEmpty()) {
+                            juego.setAutor2(null);
+                        } else {
+                            juego.setAutor2(autor2Nuevo);
+                        }
+
+                        juego.setDescripcion(leerTexto(sc, "Descripción: "));
+
+                        System.out.println("Número mínimo de jugadores: ");
+                        int minNuevo = leerInt(sc);
+
+                        System.out.println("Número máximo de jugadores: ");
+                        int maxNuevo = leerInt(sc);
+
+                        if (maxNuevo < minNuevo) {
+                            System.out.println("El máximo no puede ser menor que el mínimo. No se ha modificado el juego.");
+                            break;
+                        }
+                        juego.setMinJugadores(minNuevo);
+                        juego.setMaxJugadores(maxNuevo);
+
+                        System.out.println("Duración (minutos): ");
+                        juego.setDuracion(leerInt(sc));
+
+                        System.out.println("Temática: ");
+                        juego.setTematica(leerTexto(sc, ""));
+
+                        System.out.println("Competitivo = 1 | Cooperativo = 0");
+                        System.out.println("Escoge un número: ");
+                        int competitivoNuevo = leerInt(sc);
+                        if (competitivoNuevo == 1) {
+                            juego.setCompetitivo(true);
+                        } else {
+                            juego.setCompetitivo(false);
+                        }
+
+                        System.out.println("Estantería 1 (>12 años)");
+                        System.out.println("Estantería 2 (5-11 años)");
+                        System.out.println("Estantería 3 (Infantil)");
+                        System.out.println("Escoge la estantería: ");
+                        int ubicacionNueva = leerInt(sc);
+
+                        if (ubicacionNueva == 1) {
+                            juego.setUbicacion("Estantería 1 (>12 años)");
+                        } else if (ubicacionNueva == 2) {
+                            juego.setUbicacion("Estantería 2 (5-11 años)");
+                        } else if (ubicacionNueva == 3) {
+                            juego.setUbicacion("Estantería 3 (Infantil)");
+                        } else {
+                            System.out.println("Estantería no válida. No se ha modificado el juego.");
+                            break;
+                        }
+
+                        System.out.println("1. Disponible");
+                        System.out.println("2. Prestado");
+                        System.out.println("3. En reparación");
+                        System.out.println("Escoge el estado: ");
+                        int estadoNuevo = leerInt(sc);
+
+                        if (estadoNuevo == 1) {
+                            juego.setEstado("disponible");
+                        } else if (estadoNuevo == 2) {
+                            juego.setEstado("prestado");
+                        } else if (estadoNuevo == 3) {
+                            juego.setEstado("en reparación");
+                        } else {
+                            System.out.println("Estado no válido. No se ha modificado el juego.");
+                            break;
+                        }
+
+                        dao.actualizar(juego);
+                        System.out.println("Juego modificado correctamente.");
+                        break;
+                    }
+
+                    case 4: {
+                        System.out.println("Id del juego a eliminar: ");
+                        int idBaja = leerInt(sc);
+
+                        Juego aBorrar = dao.buscarPorId(idBaja);
+
+                        if (aBorrar == null) {
+                            System.out.println("No existe ningún juego con ese id.");
+                            break;
+                        }
+
+                        System.out.println("Vas a eliminar el juego: " + aBorrar.getNombre());
+                        String respuesta = leerTexto(sc, "¿Seguro? (s/n): ");
+
+                        if (respuesta.equalsIgnoreCase("s")) {
+                            try {
+                                dao.eliminar(idBaja);
+                                System.out.println("Juego eliminado correctamente.");
+                            } catch (SQLException e) {
+                                // TODO : Mejor hacer una búsqueda de FKs y si tiene relaciones con otras tablas, pues q no se pueda borrar (antes de intentarlo)
+                                System.out.println("No se pudo eliminar el juego. Es posible que tenga partidas asociadas.");
+                                System.out.println("Detalle: " + e.getMessage());
+                            }
+                        } else {
+                            System.out.println("Operación cancelada.");
+                        }
+                        break;
+                    }
+
+                    case 5:
+                        menuBusquedaJuegos(sc);
+                        break;
+
+                    case 0:
+                        break;
+
+                    default:
+                        System.out.println("Opción no válida.");
                 }
-
-                case 5:
-                    menuBusquedaJuegos(sc);
-                    break;
-
-                case 0:
-                    break;
-
-                default:
-                    System.out.println("Opción no válida.");
+            } catch (SQLException e) {
+                System.out.println("Error en la base de datos: " + e.getMessage());
+                opcion = -1;
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Debes escribir un número entero válido.");
-        } catch (SQLException e) {
-            System.out.println("Error en la base de datos: " + e.getMessage());
         }
+        while (opcion != 0);
     }
 
     // Menú de socias
     private static void menuSocias(Scanner sc) {
 
-        System.out.println("\n\n===== GESTIÓN DE SOCIAS =====");
-        System.out.println("1. Listar socias");
-        System.out.println("2. Consultar juegos y partidas de una socia");
-        System.out.println("3. Dar de alta una socia");
-        System.out.println("4. Modificar una socia");
-        System.out.println("5. Dar de baja una socia");
-        System.out.println("6. Buscar socias");
-        System.out.println("0. Volver al menú principal");
-        System.out.print("\nElige una opción: ");
-
         SociaDao dao = new SociaDaoImpl();
 
-        try {
-            int opcion = leerInt(sc);
+        int opcion;
 
-            switch (opcion) {
-                case 1: {
-                    List<Socia> socias = dao.listar();
+        do {
 
-                    System.out.println("Número total de socias: " + socias.size());
+            System.out.println("\n\n===== GESTIÓN DE SOCIAS =====");
+            System.out.println("1. Listar socias");
+            System.out.println("2. Consultar juegos y partidas de una socia");
+            System.out.println("3. Dar de alta una socia");
+            System.out.println("4. Modificar una socia");
+            System.out.println("5. Dar de baja una socia");
+            System.out.println("6. Buscar socias");
+            System.out.println("0. Volver al menú principal");
+            System.out.print("\nElige una opción: ");
 
-                    if (socias.isEmpty()) {
-                        System.out.println("No hay socias en la base de datos.");
-                    } else {
-                        for (Socia s : socias) {
-                            System.out.println("\nDocumento: " + s.getDocumento());
-                            System.out.println("Nombre: " + s.getNombre());
-                            System.out.println("Apellidos: " + s.getApellido1() + " " + s.getApellido2());
-                            System.out.println("Teléfono: " + s.getTelefono());
-                            System.out.println("Edad: " + s.getEdad());
-                            System.out.println("Email: " + s.getEmail());
-                            System.out.println("----------------------------");
-                        }
-                    }
-                    break;
-                }
 
-                case 2: {
-                    String documentoConsulta = leerTexto(sc, "Documento de la socia: ");
+            try {
+                opcion = leerInt(sc);
 
-                    Socia consulta = dao.buscarDocumento(documentoConsulta);
+                switch (opcion) {
+                    case 1: {
+                        List<Socia> socias = dao.listar();
 
-                    if (consulta == null) {
-                        System.out.println("No existe ninguna socia con ese documento.");
-                        break;
-                    }
+                        System.out.println("Número total de socias: " + socias.size());
 
-                    System.out.println("Socia: " + consulta.getNombre() + " " + consulta.getApellido1());
-
-                    System.out.println("--- Juegos de la socia ---");
-                    boolean tieneJuegos = false;
-                    JuegoDao juegoDao = new JuegoDaoImpl();
-                    List<Juego> todosLosJuegos = juegoDao.listar();
-
-                    for (Juego j : todosLosJuegos) {
-                        if (j.getSociaPropietaria() != null) {
-                            if (j.getSociaPropietaria().getDocumento().equals(documentoConsulta)) {
-                                System.out.println(j.getId() + " - " + j.getNombre() + " (" + j.getEstado() + ")");
-                                tieneJuegos = true;
+                        if (socias.isEmpty()) {
+                            System.out.println("No hay socias en la base de datos.");
+                        } else {
+                            for (Socia s : socias) {
+                                System.out.println("\nDocumento: " + s.getDocumento());
+                                System.out.println("Nombre: " + s.getNombre());
+                                System.out.println("Apellidos: " + s.getApellido1() + " " +
+                                        (s.getApellido2() != null ? s.getApellido2() : ""));
+                                System.out.println("Teléfono: " + s.getTelefono());
+                                System.out.println("Edad: " + s.getEdad());
+                                System.out.println("Email: " + s.getEmail());
+                                System.out.println("----------------------------");
                             }
                         }
+                        break;
                     }
 
-                    if (!tieneJuegos) {
-                        System.out.println("No tiene juegos registrados.");
-                    }
+                    case 2: {
+                        String documentoConsulta = leerTexto(sc, "Documento de la socia: ");
 
-                    System.out.println("--- Partidas de la socia ---");
-                    boolean tienePartidas = false;
-                    PartidaDao partidaDao = new PartidaDaoImpl();
-                    List<Partida> todasLasPartidas = partidaDao.listar();
+                        Socia consulta = dao.buscarDocumento(documentoConsulta);
 
-                    for (Partida p : todasLasPartidas) {
-                        for (Socia jugadora : p.getListaJugadorasSocias()) {
-                            if (jugadora.getDocumento().equals(documentoConsulta)) {
-                                System.out.println("Partida " + p.getId() + " - " + p.getFecha() + " a las " + p.getHora());
-                                tienePartidas = true;
+                        if (consulta == null) {
+                            System.out.println("No existe ninguna socia con ese documento.");
+                            break;
+                        }
+
+                        System.out.println("Socia: " + consulta.getNombre() + " " + consulta.getApellido1());
+
+                        System.out.println("--- Juegos de la socia ---");
+                        boolean tieneJuegos = false;
+                        JuegoDao juegoDao = new JuegoDaoImpl();
+                        List<Juego> todosLosJuegos = juegoDao.listar();
+
+                        for (Juego j : todosLosJuegos) {
+                            if (j.getSociaPropietaria() != null) {
+                                if (j.getSociaPropietaria().getDocumento().equals(documentoConsulta)) {
+                                    System.out.println(j.getId() + " - " + j.getNombre() + " (" + j.getEstado() + ")");
+                                    tieneJuegos = true;
+                                }
                             }
                         }
-                    }
 
-                    if (!tienePartidas) {
-                        System.out.println("No está inscrita en ninguna partida.");
-                    }
-                    break;
-                }
+                        if (!tieneJuegos) {
+                            System.out.println("No tiene juegos registrados.");
+                        }
 
-                case 3: {
-                    Socia nueva = new Socia();
+                        System.out.println("--- Partidas de la socia ---");
+                        boolean tienePartidas = false;
+                        PartidaDao partidaDao = new PartidaDaoImpl();
+                        List<Partida> todasLasPartidas = partidaDao.listar();
 
-                    String documento = leerDni(sc);
+                        for (Partida p : todasLasPartidas) {
+                            for (Socia jugadora : p.getListaJugadorasSocias()) {
+                                if (jugadora.getDocumento().equals(documentoConsulta)) {
+                                    System.out.println("Partida " + p.getId() + " - " + p.getFecha() + " a las " + p.getHora());
+                                    tienePartidas = true;
+                                }
+                            }
+                        }
 
-                    if (dao.buscarDocumento(documento) != null) {
-                        System.out.println("Ya existe una socia con ese documento.");
-                        break;
-                    }
-                    nueva.setDocumento(documento);
-
-                    nueva.setNombre(leerTexto(sc, "Nombre: "));
-
-                    nueva.setApellido1(leerTexto(sc, "Primer apellido: "));
-
-                    System.out.println("Segundo apellido (deja vacío si no tiene): ");
-                    String apellido2 = sc.nextLine().trim();
-                    if (apellido2.isEmpty()) {
-                        nueva.setApellido2(null);
-                    } else {
-                        nueva.setApellido2(apellido2);
-                    }
-
-                    nueva.setTelefono(leerTelefono(sc));
-
-                    System.out.println("Edad: ");
-                    nueva.setEdad(leerInt(sc));
-
-                    nueva.setEmail(leerEmail(sc));
-
-                    dao.insertar(nueva);
-                    System.out.println("Socia dada de alta correctamente.");
-                    break;
-                }
-
-                case 4: {
-                    String documentoModificar = leerTexto(sc, "Documento de la socia a modificar: ");
-
-                    Socia socia = dao.buscarDocumento(documentoModificar);
-
-                    if (socia == null) {
-                        System.out.println("No existe ninguna socia con ese documento.");
+                        if (!tienePartidas) {
+                            System.out.println("No está inscrita en ninguna partida.");
+                        }
                         break;
                     }
 
-                    System.out.println("Escribe los nuevos datos de la socia");
+                    case 3: {
+                        Socia nueva = new Socia();
 
-                    socia.setNombre(leerTexto(sc, "Nombre: "));
+                        String documento = leerDocumento(sc);
 
-                    socia.setApellido1(leerTexto(sc, "Primer apellido: "));
+                        if (dao.buscarDocumento(documento) != null) {
+                            System.out.println("Ya existe una socia con ese documento.");
+                            break;
+                        }
+                        nueva.setDocumento(documento);
 
-                    System.out.println("Segundo apellido (deja vacío si no tiene): ");
-                    String apellido2Nuevo = sc.nextLine().trim();
-                    if (apellido2Nuevo.isEmpty()) {
-                        socia.setApellido2(null);
-                    } else {
-                        socia.setApellido2(apellido2Nuevo);
-                    }
+                        nueva.setNombre(leerTexto(sc, "Nombre: "));
 
-                    socia.setTelefono(leerTelefono(sc));
+                        nueva.setApellido1(leerTexto(sc, "Primer apellido: "));
 
-                    System.out.println("Edad: ");
-                    socia.setEdad(leerInt(sc));
+                        System.out.println("Segundo apellido (deja vacío si no tiene): ");
+                        String apellido2 = sc.nextLine().trim();
+                        if (apellido2.isEmpty()) {
+                            nueva.setApellido2(null);
+                        } else {
+                            nueva.setApellido2(apellido2);
+                        }
 
-                    socia.setEmail(leerEmail(sc));
+                        nueva.setTelefono(leerTelefono(sc));
 
-                    dao.actualizar(socia);
-                    System.out.println("Socia modificada correctamente.");
-                    break;
-                }
+                        // TODO : Comprobar en todo lo relacionado con "Edad" que sea mayor que 0
+                        System.out.println("Edad: ");
+                        nueva.setEdad(leerInt(sc));
 
-                case 5: {
-                    String documentoBaja = leerTexto(sc, "Documento de la socia a dar de baja: ");
+                        nueva.setEmail(leerEmail(sc));
 
-                    Socia aBorrar = dao.buscarDocumento(documentoBaja);
-
-                    if (aBorrar == null) {
-                        System.out.println("No existe ninguna socia con ese documento.");
+                        dao.insertar(nueva);
+                        System.out.println("Socia dada de alta correctamente.");
                         break;
                     }
 
-                    System.out.println("Vas a eliminar a: " + aBorrar.getNombre() + " " + aBorrar.getApellido1());
-                    String respuesta = leerTexto(sc, "¿Seguro? (s/n): ");
+                    case 4: {
+                        String documentoModificar = leerTexto(sc, "Documento de la socia a modificar: ");
 
-                    if (respuesta.equalsIgnoreCase("s")) {
-                        dao.eliminar(documentoBaja);
-                        System.out.println("Socia eliminada correctamente.");
-                    } else {
-                        System.out.println("Operación cancelada.");
+                        Socia socia = dao.buscarDocumento(documentoModificar);
+
+                        if (socia == null) {
+                            System.out.println("No existe ninguna socia con ese documento.");
+                            break;
+                        }
+
+                        System.out.println("Escribe los nuevos datos de la socia");
+
+                        socia.setNombre(leerTexto(sc, "Nombre: "));
+
+                        socia.setApellido1(leerTexto(sc, "Primer apellido: "));
+
+                        System.out.println("Segundo apellido (deja vacío si no tiene): ");
+                        String apellido2Nuevo = sc.nextLine().trim();
+                        if (apellido2Nuevo.isEmpty()) {
+                            socia.setApellido2(null);
+                        } else {
+                            socia.setApellido2(apellido2Nuevo);
+                        }
+
+                        socia.setTelefono(leerTelefono(sc));
+
+                        System.out.println("Edad: ");
+                        socia.setEdad(leerInt(sc));
+
+                        socia.setEmail(leerEmail(sc));
+
+                        dao.actualizar(socia);
+                        System.out.println("Socia modificada correctamente.");
+                        break;
                     }
-                    break;
+
+                    case 5: {
+                        String documentoBaja = leerTexto(sc, "Documento de la socia a dar de baja: ");
+
+                        Socia aBorrar = dao.buscarDocumento(documentoBaja);
+
+                        if (aBorrar == null) {
+                            System.out.println("No existe ninguna socia con ese documento.");
+                            break;
+                        }
+
+                        System.out.println("Vas a eliminar a: " + aBorrar.getNombre() + " " + aBorrar.getApellido1());
+                        String respuesta = leerTexto(sc, "¿Seguro? (s/n): ");
+
+                        if (respuesta.equalsIgnoreCase("s")) {
+                            dao.eliminar(documentoBaja);
+                            System.out.println("Socia eliminada correctamente.");
+                        } else {
+                            System.out.println("Operación cancelada.");
+                        }
+                        break;
+                    }
+
+                    case 6:
+                        menuBusquedaSocias(sc);
+                        break;
+
+                    case 0:
+                        break;
+
+                    default:
+                        System.out.println("Opción no válida.");
                 }
-
-                case 6:
-                    menuBusquedaSocias(sc);
-                    break;
-
-                case 0:
-                    break;
-
-                default:
-                    System.out.println("Opción no válida.");
+            } catch (SQLException e) {
+                System.out.println("Error en la base de datos: " + e.getMessage());
+                opcion = -1;
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Debes escribir un número entero válido.");
-        } catch (SQLException e) {
-            System.out.println("Error en la base de datos: " + e.getMessage());
         }
+        while (opcion != 0);
     }
 
     // Menú de partidas
     private static void menuPartidas(Scanner sc) {
 
-        System.out.println("\n\n===== GESTIÓN DE PARTIDAS =====");
-        System.out.println("1. Listar partidas");
-        System.out.println("2. Dar de alta una partida");
-        System.out.println("3. Modificar una partida");
-        System.out.println("4. Dar de baja una partida");
-        System.out.println("5. Buscar partidas");
-        System.out.println("0. Volver al menú principal");
-        System.out.print("\nElige una opción: ");
-
         PartidaDao dao = new PartidaDaoImpl();
         JuegoDao juegoDao = new JuegoDaoImpl();
 
-        try {
-            int opcion = leerInt(sc);
+        int opcion;
 
-            switch (opcion) {
-                case 1: {
-                    List<Partida> partidas = dao.listar();
+        do {
 
-                    System.out.println("Número total de partidas: " + partidas.size());
+            System.out.println("\n\n===== GESTIÓN DE PARTIDAS =====");
+            System.out.println("1. Listar partidas");
+            System.out.println("2. Dar de alta una partida");
+            System.out.println("3. Modificar una partida");
+            System.out.println("4. Dar de baja una partida");
+            System.out.println("5. Buscar partidas");
+            System.out.println("0. Volver al menú principal");
+            System.out.print("\nElige una opción: ");
 
-                    if (partidas.isEmpty()) {
-                        System.out.println("No hay partidas en la base de datos.");
-                    } else {
-                        for (Partida p : partidas) {
-                            System.out.println("\nId: " + p.getId());
+            try {
+                opcion = leerInt(sc);
 
-                            // TODO : No muestra el ID del juego
-                            if (p.getJuego() != null) {
-                                System.out.println("Id del juego: " + p.getJuego().getId());
+                switch (opcion) {
+                    case 1: {
+                        List<Partida> partidas = dao.listar();
+
+                        System.out.println("Número total de partidas: " + partidas.size());
+
+                        if (partidas.isEmpty()) {
+                            System.out.println("No hay partidas en la base de datos.");
+                        } else {
+                            for (Partida p : partidas) {
+                                System.out.println("\nId: " + p.getId());
+
+                                // TODO : No muestra el ID del juego
+                                if (p.getJuego() != null) {
+                                    System.out.println("Id del juego: " + p.getJuego().getId());
+                                }
+                                System.out.println("Fecha: " + p.getFecha());
+                                System.out.println("Hora: " + p.getHora());
+                                System.out.println("Jugadores deseados: " + p.getJugadoresDeseados());
+                                System.out.println("Plazas libres: " + p.getPlazasLibres());
+                                System.out.println("----------------------------");
                             }
-                            System.out.println("Fecha: " + p.getFecha());
-                            System.out.println("Hora: " + p.getHora());
-                            System.out.println("Jugadores deseados: " + p.getJugadoresDeseados());
-                            System.out.println("Plazas libres: " + p.getPlazasLibres());
-                            System.out.println("----------------------------");
                         }
-                    }
-                    break;
-                }
-
-                case 2: {
-                    System.out.println("Id del juego de la partida: ");
-                    int idJuego = leerInt(sc);
-
-                    Juego juego = juegoDao.buscarPorId(idJuego);
-
-                    if (juego == null) {
-                        System.out.println("No existe ningún juego con ese id.");
                         break;
                     }
 
-                    Partida nueva = new Partida();
-                    nueva.setJuego(juego);
+                    case 2: {
+                        System.out.println("Id del juego de la partida: ");
+                        int idJuego = leerInt(sc);
 
-                    String textoFecha = leerTexto(sc, "Fecha de la partida (aaaa-mm-dd): ");
-                    nueva.setFecha(LocalDate.parse(textoFecha));
+                        Juego juego = juegoDao.buscarPorId(idJuego);
 
-                    String textoHora = leerTexto(sc, "Hora de la partida (hh:mm): ");
-                    nueva.setHora(LocalTime.parse(textoHora));
-
-                    System.out.println("Jugadores deseados (entre " + juego.getMinJugadores() + " y " + juego.getMaxJugadores() + "): ");
-                    int deseados = leerInt(sc);
-
-                    if (deseados < juego.getMinJugadores() || deseados > juego.getMaxJugadores()) {
-                        System.out.println("Ese número está fuera del rango del juego. No se ha dado de alta la partida.");
-                        break;
-                    }
-
-                    nueva.setJugadoresDeseados(deseados);
-                    nueva.setPlazasLibres(deseados);
-
-                    int idNueva = dao.insertar(nueva);
-                    System.out.println("Partida dada de alta con id " + idNueva + ".");
-                    break;
-                }
-
-                case 3: {
-                    System.out.println("Id de la partida a modificar: ");
-                    int idModificar = leerInt(sc);
-
-                    Partida partida = dao.buscarporId(idModificar);
-
-                    if (partida == null) {
-                        System.out.println("No existe ninguna partida con ese id.");
-                        break;
-                    }
-
-                    System.out.println("Escribe los nuevos datos de la partida");
-
-                    String fechaNueva = leerTexto(sc, "Fecha (aaaa-mm-dd): ");
-                    partida.setFecha(LocalDate.parse(fechaNueva));
-
-                    String horaNueva = leerTexto(sc, "Hora (hh:mm): ");
-                    partida.setHora(LocalTime.parse(horaNueva));
-
-                    Juego juegoPartida = juegoDao.buscarPorId(partida.getJuego().getId());
-
-                    if (juegoPartida == null) {
-                        System.out.println("No se encuentra el juego de la partida.");
-                        break;
-                    }
-
-                    System.out.println("Jugadores deseados (entre " + juegoPartida.getMinJugadores() + " y " + juegoPartida.getMaxJugadores() + "): ");
-                    int deseadosNuevos = leerInt(sc);
-
-                    if (deseadosNuevos < juegoPartida.getMinJugadores() || deseadosNuevos > juegoPartida.getMaxJugadores()) {
-                        System.out.println("Ese número está fuera del rango del juego. No se ha modificado la partida.");
-                        break;
-                    }
-
-                    int diferencia = deseadosNuevos - partida.getJugadoresDeseados();
-                    int plazasNuevas = partida.getPlazasLibres() + diferencia;
-
-                    if (plazasNuevas < 0) {
-                        plazasNuevas = 0;
-                    }
-
-                    partida.setJugadoresDeseados(deseadosNuevos);
-                    partida.setPlazasLibres(plazasNuevas);
-
-                    dao.actualizar(partida);
-                    System.out.println("Partida modificada correctamente.");
-                    break;
-                }
-
-                case 4: {
-                    System.out.println("Id de la partida a dar de baja: ");
-                    int idBaja = leerInt(sc);
-
-                    Partida aBorrar = dao.buscarporId(idBaja);
-
-                    if (aBorrar == null) {
-                        System.out.println("No existe ninguna partida con ese id.");
-                        break;
-                    }
-
-                    System.out.println("Vas a eliminar la partida " + aBorrar.getId() + " del " + aBorrar.getFecha() + " a las " + aBorrar.getHora());
-                    String respuesta = leerTexto(sc, "¿Seguro? (s/n): ");
-
-                    if (respuesta.equalsIgnoreCase("s")) {
-                        try {
-                            dao.eliminar(idBaja);
-                            System.out.println("Partida eliminada correctamente.");
-                        } catch (SQLException e) {
-                            System.out.println("No se pudo eliminar la partida. Es posible que tenga jugadoras inscritas.");
-                            System.out.println("Detalle: " + e.getMessage());
+                        if (juego == null) {
+                            System.out.println("No existe ningún juego con ese id.");
+                            break;
                         }
-                    } else {
-                        System.out.println("Operación cancelada.");
+
+                        Partida nueva = new Partida();
+                        nueva.setJuego(juego);
+
+                        String textoFecha = leerTexto(sc, "Fecha de la partida (aaaa-mm-dd): ");
+                        nueva.setFecha(LocalDate.parse(textoFecha));
+
+                        String textoHora = leerTexto(sc, "Hora de la partida (hh:mm): ");
+                        nueva.setHora(LocalTime.parse(textoHora));
+
+                        System.out.println("Jugadores deseados (entre " + juego.getMinJugadores() + " y " + juego.getMaxJugadores() + "): ");
+                        int deseados = leerInt(sc);
+
+                        if (deseados < juego.getMinJugadores() || deseados > juego.getMaxJugadores()) {
+                            System.out.println("Ese número está fuera del rango del juego. No se ha dado de alta la partida.");
+                            break;
+                        }
+
+                        nueva.setJugadoresDeseados(deseados);
+                        nueva.setPlazasLibres(deseados);
+
+                        int idNueva = dao.insertar(nueva);
+                        System.out.println("Partida dada de alta con id " + idNueva + ".");
+                        break;
                     }
-                    break;
+
+                    case 3: {
+                        System.out.println("Id de la partida a modificar: ");
+                        int idModificar = leerInt(sc);
+
+                        Partida partida = dao.buscarporId(idModificar);
+
+                        if (partida == null) {
+                            System.out.println("No existe ninguna partida con ese id.");
+                            break;
+                        }
+
+                        System.out.println("Escribe los nuevos datos de la partida");
+
+                        String fechaNueva = leerTexto(sc, "Fecha (aaaa-mm-dd): ");
+                        partida.setFecha(LocalDate.parse(fechaNueva));
+
+                        String horaNueva = leerTexto(sc, "Hora (hh:mm): ");
+                        partida.setHora(LocalTime.parse(horaNueva));
+
+                        Juego juegoPartida = juegoDao.buscarPorId(partida.getJuego().getId());
+
+                        if (juegoPartida == null) {
+                            System.out.println("No se encuentra el juego de la partida.");
+                            break;
+                        }
+
+                        System.out.println("Jugadores deseados (entre " + juegoPartida.getMinJugadores() + " y " + juegoPartida.getMaxJugadores() + "): ");
+                        int deseadosNuevos = leerInt(sc);
+
+                        if (deseadosNuevos < juegoPartida.getMinJugadores() || deseadosNuevos > juegoPartida.getMaxJugadores()) {
+                            System.out.println("Ese número está fuera del rango del juego. No se ha modificado la partida.");
+                            break;
+                        }
+
+                        int diferencia = deseadosNuevos - partida.getJugadoresDeseados();
+                        int plazasNuevas = partida.getPlazasLibres() + diferencia;
+
+                        if (plazasNuevas < 0) {
+                            plazasNuevas = 0;
+                        }
+
+                        partida.setJugadoresDeseados(deseadosNuevos);
+                        partida.setPlazasLibres(plazasNuevas);
+
+                        dao.actualizar(partida);
+                        System.out.println("Partida modificada correctamente.");
+                        break;
+                    }
+
+                    case 4: {
+                        System.out.println("Id de la partida a dar de baja: ");
+                        int idBaja = leerInt(sc);
+
+                        Partida aBorrar = dao.buscarporId(idBaja);
+
+                        if (aBorrar == null) {
+                            System.out.println("No existe ninguna partida con ese id.");
+                            break;
+                        }
+
+                        System.out.println("Vas a eliminar la partida " + aBorrar.getId() + " del " + aBorrar.getFecha() + " a las " + aBorrar.getHora());
+                        String respuesta = leerTexto(sc, "¿Seguro? (s/n): ");
+
+                        if (respuesta.equalsIgnoreCase("s")) {
+                            try {
+                                dao.eliminar(idBaja);
+                                System.out.println("Partida eliminada correctamente.");
+                            } catch (SQLException e) {
+                                System.out.println("No se pudo eliminar la partida. Es posible que tenga jugadoras inscritas.");
+                                System.out.println("Detalle: " + e.getMessage());
+                            }
+                        } else {
+                            System.out.println("Operación cancelada.");
+                        }
+                        break;
+                    }
+
+                    case 5:
+                        menuBusquedaPartidas(sc);
+                        break;
+
+                    case 0:
+                        break;
+
+                    default:
+                        System.out.println("Opción no válida.");
                 }
-
-                case 5:
-                    menuBusquedaPartidas(sc);
-                    break;
-
-                case 0:
-                    break;
-
-                default:
-                    System.out.println("Opción no válida.");
+            } catch (DateTimeParseException e) {
+                System.out.println("Fecha u hora con formato incorrecto. Ejemplos: 2026-11-15 y 18:30");
+                opcion = -1;
+            } catch (SQLException e) {
+                System.out.println("Error en la base de datos: " + e.getMessage());
+                opcion = -1;
             }
-        } catch (NumberFormatException e) {
-            System.out.println("Debes escribir un número entero válido.");
-        } catch (DateTimeParseException e) {
-            System.out.println("Fecha u hora con formato incorrecto. Ejemplos: 2026-11-15 y 18:30");
-        } catch (SQLException e) {
-            System.out.println("Error en la base de datos: " + e.getMessage());
         }
+        while (opcion != 0);
     }
 
     // Submenú de búsqueda de juegos
@@ -868,10 +888,6 @@ public class App {
                         System.out.println("Opción no válida.");
                 }
 
-            } catch (NumberFormatException e) {
-                System.out.println("Debes introducir un número entero válido.");
-                opcion = -1;
-
             } catch (SQLException e) {
                 System.out.println("Error al buscar juegos: " + e.getMessage());
                 opcion = -1;
@@ -895,7 +911,7 @@ public class App {
             System.out.println("\nId: " + j.getId());
             System.out.println("Nombre: " + j.getNombre());
             System.out.println("Autor 1: " + j.getAutor1());
-            System.out.println("Autor 2: " + j.getAutor2());
+            System.out.println("Autor 2: " + (j.getAutor2() != null ? j.getAutor2() : "(No tiene segundo autor)"));
             System.out.println("Descripción: " + j.getDescripcion());
             System.out.println("Jugadores: " + j.getMinJugadores() + " - " + j.getMaxJugadores());
             System.out.println("Duración: " + j.getDuracion() + " minutos");
@@ -958,7 +974,7 @@ public class App {
                     }
                     case 3: {
                         System.out.print("Introduce el segundo apellido de la socia: ");
-                        String apellido = sc.nextLine();
+                        String apellido = sc.nextLine().trim();
 
                         List<Socia> resultados = dao.buscarPorSegundoApellido(apellido);
                         mostrarResultadosSocias(resultados);
@@ -970,9 +986,6 @@ public class App {
                         System.out.println("Opción no válida.");
                 }
 
-            } catch (NumberFormatException e) {
-                System.out.println("Debes introducir un número entero válido.");
-                opcion = -1;
             } catch (SQLException e) {
                 System.out.println("Error al buscar socias: " + e.getMessage());
                 opcion = -1;
@@ -995,7 +1008,7 @@ public class App {
             System.out.println("Nombre: " + s.getNombre());
             System.out.println("Primer apellido: " + s.getApellido1());
             // TODO : Comprobar en todo lo relacionado con "Segundo apellido" que saque texto de "(No tiene segundo apellido)"
-            System.out.println("Segundo apellido: " + s.getApellido2());
+            System.out.println("Segundo apellido: " + (s.getApellido2() != null ? s.getApellido2() : "(No tiene segundo apellido)"));
             System.out.println("Teléfono: " + s.getTelefono());
             System.out.println("Edad: " + s.getEdad());
             System.out.println("Email: " + s.getEmail());
@@ -1040,9 +1053,6 @@ public class App {
                         System.out.println("Opción no válida.");
                 }
 
-            } catch (NumberFormatException e) {
-                System.out.println("Debes introducir un número entero válido.");
-                opcion = -1;
             } catch (DateTimeParseException e) {
                 System.out.println("La fecha debe tener el formato AAAA-MM-DD.");
                 opcion = -1;
@@ -1081,68 +1091,74 @@ public class App {
     // Menú de exportaciones
     private static void menuExportaciones(Scanner sc) throws Exception {
 
-        System.out.println("\n===== EXPORTAR DATOS =====");
-        System.out.println("1. Exportar juegos a XML");
-        System.out.println("2. Exportar juegos a JSON");
-        System.out.println("3. Exportar socias a XML");
-        System.out.println("4. Exportar socias a JSON");
-        System.out.println("5. Exportar partidas a XML");
-        System.out.println("6. Exportar partidas a JSON");
-        System.out.println("7. Exportar todo a XML");
-        System.out.println("8. Exportar todo a JSON");
-        System.out.println("9. Exportar todo a XML y JSON");
-        System.out.println("0. Volver al menú principal");
-        System.out.print("\nElige una opción: ");
+        int opcion;
 
-        int opcion = leerInt(sc);
+        do {
 
-        switch (opcion) {
-            case 1:
-                ExportarDatos.exportarJuegosXML();
-                break;
-            case 2:
-                ExportarDatos.exportarJuegosJSON();
-                break;
-            case 3:
-                ExportarDatos.exportarSociasXML();
-                break;
-            case 4:
-                ExportarDatos.exportarSociasJSON();
-                break;
-            case 5:
-                ExportarDatos.exportarPartidasXML();
-                break;
-            case 6:
-                ExportarDatos.exportarPartidasJSON();
-                break;
-            case 7:
-                ExportarDatos.exportarJuegosXML();
-                ExportarDatos.exportarSociasXML();
-                ExportarDatos.exportarPartidasXML();
-                break;
-            case 8:
-                ExportarDatos.exportarJuegosJSON();
-                ExportarDatos.exportarSociasJSON();
-                ExportarDatos.exportarPartidasJSON();
-                break;
-            case 9:
-                ExportarDatos.exportarJuegosXML();
-                ExportarDatos.exportarSociasXML();
-                ExportarDatos.exportarPartidasXML();
-                ExportarDatos.exportarJuegosJSON();
-                ExportarDatos.exportarSociasJSON();
-                ExportarDatos.exportarPartidasJSON();
-                break;
-            case 0:
-                break;
-            default:
-                System.out.println("Opción no válida.");
-                return;
+            System.out.println("\n===== EXPORTAR DATOS =====");
+            System.out.println("1. Exportar juegos a XML");
+            System.out.println("2. Exportar juegos a JSON");
+            System.out.println("3. Exportar socias a XML");
+            System.out.println("4. Exportar socias a JSON");
+            System.out.println("5. Exportar partidas a XML");
+            System.out.println("6. Exportar partidas a JSON");
+            System.out.println("7. Exportar todo a XML");
+            System.out.println("8. Exportar todo a JSON");
+            System.out.println("9. Exportar todo a XML y JSON");
+            System.out.println("0. Volver al menú principal");
+            System.out.print("\nElige una opción: ");
+
+            opcion = leerInt(sc);
+
+            switch (opcion) {
+                case 1:
+                    ExportarDatos.exportarJuegosXML();
+                    break;
+                case 2:
+                    ExportarDatos.exportarJuegosJSON();
+                    break;
+                case 3:
+                    ExportarDatos.exportarSociasXML();
+                    break;
+                case 4:
+                    ExportarDatos.exportarSociasJSON();
+                    break;
+                case 5:
+                    ExportarDatos.exportarPartidasXML();
+                    break;
+                case 6:
+                    ExportarDatos.exportarPartidasJSON();
+                    break;
+                case 7:
+                    ExportarDatos.exportarJuegosXML();
+                    ExportarDatos.exportarSociasXML();
+                    ExportarDatos.exportarPartidasXML();
+                    break;
+                case 8:
+                    ExportarDatos.exportarJuegosJSON();
+                    ExportarDatos.exportarSociasJSON();
+                    ExportarDatos.exportarPartidasJSON();
+                    break;
+                case 9:
+                    ExportarDatos.exportarJuegosXML();
+                    ExportarDatos.exportarSociasXML();
+                    ExportarDatos.exportarPartidasXML();
+                    ExportarDatos.exportarJuegosJSON();
+                    ExportarDatos.exportarSociasJSON();
+                    ExportarDatos.exportarPartidasJSON();
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Opción no válida.");
+                    return;
+            }
+
+            if (opcion != 0) {
+                System.out.println("Exportación finalizada.\n");
+            }
         }
-
-        if (opcion != 0) {
-            System.out.println("Exportación finalizada.\n");
-        }
+        while (opcion != 0);
     }
 
     /* ----- Funciones auxiliares ----- */
@@ -1177,7 +1193,7 @@ public class App {
         return texto;
     }
 
-    public static String leerDni(Scanner sc) {
+    public static String leerDocumento(Scanner sc) {
 
         while (true) {
 
@@ -1185,15 +1201,15 @@ public class App {
             String documento = sc.nextLine().trim().toUpperCase();
 
             // DNI: 8 números y una letra
-            boolean dniValido = documento.matches("\\d{8}[A-Z]");
+            boolean formatoDni = documento.matches("\\d{8}[A-Z]");
 
             // NIE: X, Y o Z + 7 números + una letra
-            boolean nieValido = documento.matches("[XYZ]\\d{7}[A-Z]");
+            boolean formatoNie = documento.matches("[XYZ]\\d{7}[A-Z]");
 
-            // Pasaporte: entre 6 y 12 caracteres alfanuméricos
-            boolean pasaporteValido = documento.matches("[A-Z0-9]{6,12}");
+            // Pasaporte: formato genérico de 6 a 12 caracteres alfanuméricos
+            boolean formatoPasaporte = documento.matches("[A-Z0-9]{6,12}") && !formatoDni && !formatoNie;
 
-            if (dniValido || nieValido || pasaporteValido) {
+            if (formatoDni || formatoNie || formatoPasaporte) {
                 return documento;
             }
 
