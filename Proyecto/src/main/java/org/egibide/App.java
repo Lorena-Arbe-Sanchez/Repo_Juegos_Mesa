@@ -159,7 +159,8 @@ public class App {
                             System.out.println("\nId: " + j.getId());
                             System.out.println("Nombre: " + j.getNombre());
                             System.out.println("Autor 1: " + j.getAutor1());
-                            System.out.println("Autor 2: " + j.getAutor2());
+                            // Si devuelve "null" de la base de datos, mostrará un texto fijo
+                            System.out.println("Autor 2: " + (j.getAutor2() != null ? j.getAutor2() : "(No tiene segundo autor)"));
                             System.out.println("Descripción: " + j.getDescripcion());
                             System.out.println("Jugadores: " + j.getMinJugadores() + " - " + j.getMaxJugadores());
                             System.out.println("Duración: " + j.getDuracion() + " minutos");
@@ -172,8 +173,12 @@ public class App {
                             }
 
                             System.out.println("Ubicación: " + j.getUbicacion());
-                            // TODO : ¿Se podría poner que empiece en mayúscula (CamelCase)?
-                            System.out.println("Estado: " + j.getEstado());
+
+                            String estado = j.getEstado();
+                            // Obtener el estado con la primera letra en mayúscula
+                            estado = estado.substring(0, 1).toUpperCase() + estado.substring(1).toLowerCase();
+
+                            System.out.println("Estado: " + estado);
 
                             // TODO : CORREGIR ~ Si tiene como propietaria a una socia en vez de una asociación --> No la muestra
                             if (j.getAsociacionPropietaria() != null) {
