@@ -164,15 +164,53 @@ public class JuegoDaoImpl implements JuegoDao {
         return null;
     }
 
+    // Borra el juego y, antes, todo lo que depende de él: inscripciones de sus partidas, y sus partidas
     @Override
     public void eliminar(int id) throws SQLException {
-
-        String sql = "DELETE FROM juego WHERE id = ?";
+        String sqlInscritasSocias = "DELETE FROM partida_socia WHERE partida_id IN (SELECT id FROM partida WHERE juego_id = ?)";
+        String sqlInscritasInvitadas = "DELETE FROM partida_invitada WHERE partida_id IN (SELECT id FROM partida WHERE juego_id = ?)";
+        String sqlPartidas = "DELETE FROM partida WHERE juego_id = ?";
+        String sqlJuego = "DELETE FROM juego WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        try (PreparedStatement ps = puente.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
+        try {
+            // Desactiva el guardado automático: nada queda guardado hasta llegar al commit()
+            puente.setAutoCommit(false);
+
+            // 1. Quita a las socias apuntadas a las partidas de este juego
+            try (PreparedStatement ps = puente.prepareStatement(sqlInscritasSocias)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            // 2. Quita a las invitadas apuntadas a las partidas de este juego
+            try (PreparedStatement ps = puente.prepareStatement(sqlInscritasInvitadas)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            // 3. Borra las partidas de este juego
+            try (PreparedStatement ps = puente.prepareStatement(sqlPartidas)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            // 4. Borra el juego
+            try (PreparedStatement ps = puente.prepareStatement(sqlJuego)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            // Si ha llegado hasta aquí sin errores, se guarda todo de golpe
+            puente.commit();
+
+        } catch (SQLException e) {
+            // Si algo falla en medio, se deshace todo y no se borra nada
+            puente.rollback();
+            throw e;
+        } finally {
+            // Se deja la conexión como estaba, porque la comparten todos los DAO
+            puente.setAutoCommit(true);
         }
     }
 

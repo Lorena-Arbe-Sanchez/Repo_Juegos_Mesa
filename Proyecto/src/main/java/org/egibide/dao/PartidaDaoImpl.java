@@ -1,5 +1,7 @@
 package org.egibide.dao;
 
+import org.egibide.idao.InscripcionDao;
+
 import org.egibide.idao.JuegoDao;
 import org.egibide.idao.PartidaDao;
 import org.egibide.models.Juego;
@@ -12,6 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PartidaDaoImpl implements PartidaDao {
+
+    // NUEVO: se usa para cargar el juego completo de cada partida
+    private JuegoDao juegoDao = new JuegoDaoImpl();
+
+    private InscripcionDao inscripcionDao = new InscripcionDaoImpl();
 
     @Override
     public List<Partida> listar() throws SQLException {
@@ -30,7 +37,6 @@ public class PartidaDaoImpl implements PartidaDao {
         return lista;
     }
 
-    //Devuelve el id(public int), es util si necesitamos saber su id justo despues de crearlo
     @Override
     public int insertar(Partida partida) throws SQLException {
 
@@ -72,23 +78,45 @@ public class PartidaDaoImpl implements PartidaDao {
         return null;
     }
 
-
-    //ambos solo hacen la accion, no devuelven nada mas:
+    // Borra la partida y, antes, sus inscripciones
     @Override
     public void eliminar(int id) throws SQLException {
-
-        String sql = "DELETE FROM partida WHERE id = ?";
+        String sqlSocias = "DELETE FROM partida_socia WHERE partida_id = ?";
+        String sqlInvitadas = "DELETE FROM partida_invitada WHERE partida_id = ?";
+        String sqlPartida = "DELETE FROM partida WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        try (PreparedStatement ps = puente.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
+        try {
+            puente.setAutoCommit(false);
+
+            try (PreparedStatement ps = puente.prepareStatement(sqlSocias)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            try (PreparedStatement ps = puente.prepareStatement(sqlInvitadas)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            try (PreparedStatement ps = puente.prepareStatement(sqlPartida)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            puente.commit();
+
+        } catch (SQLException e) {
+            puente.rollback();
+            throw e;
+        } finally {
+            puente.setAutoCommit(true);
         }
     }
 
     @Override
     public void actualizar(Partida partida) throws SQLException {
-
+        // MODIFICADO: añadido "hora = ?" (antes faltaba y fallaba al ejecutar)
         String sql = "UPDATE partida SET juego_id = ?, fecha = ?, hora = ?, jugadores_deseados = ?, plazas_libres = ? WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
@@ -102,6 +130,7 @@ public class PartidaDaoImpl implements PartidaDao {
             ps.executeUpdate();
         }
     }
+
 
     @Override
     public List<Partida> buscarPorJuego(String nombreJuego) throws SQLException {
@@ -167,4 +196,3 @@ public class PartidaDaoImpl implements PartidaDao {
 
         return partida;
     }
-}
