@@ -5,7 +5,6 @@ import org.egibide.dao.JuegoDaoImpl;
 import org.egibide.idao.AsociacionDao;
 import org.egibide.idao.JuegoDao;
 import org.egibide.models.Juego;
-import org.egibide.utils.DatabaseConnection;
 import org.egibide.utils.ExportarDatos;
 import org.egibide.utils.MetadatosBD;
 import org.egibide.dao.PartidaDaoImpl;
@@ -20,9 +19,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import java.util.List;
@@ -33,16 +29,10 @@ import java.util.Scanner;
 public class App {
     public static void main(String[] args) throws SQLException {
 
-        DatabaseConnection dbc = DatabaseConnection.getInstance();
-
         try (Scanner sc = new Scanner(System.in)) {
 
-            Connection conexion = dbc.getConnection();
-
-            System.out.println("Conexión correcta.\n");
-
             // Mostrar los datos de la asociación al iniciar la aplicación
-            mostrarDatosAsociacion(conexion);
+            mostrarDatosAsociacion();
 
             // Menú principal
             int opcion;
@@ -94,34 +84,26 @@ public class App {
     }
 
     // Mostrar los datos principales de la asociación
-    private static void mostrarDatosAsociacion(Connection conexion) throws Exception {
+    private static void mostrarDatosAsociacion() {
 
-        // TODO : Implementar esto en la clase "AsociacionDaoImpl" correspondiente
-        // Con esta consulta se asegura que solo obtenga datos de 1 asociación (aun así en la BD solo habrá 1 guardada)
-        String sql = "SELECT * FROM asociacion LIMIT 1";
+        AsociacionDao dao = new AsociacionDaoImpl();
 
-        try (PreparedStatement ps = conexion.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
+        Asociacion asociacion = dao.getAsociacion(1);
 
-            if (rs.next()) {
-                System.out.println("\n==================================");
-                System.out.println("   " + rs.getString("nombre"));
-                System.out.println("==================================");
-                System.out.println("Razón social: "
-                        + rs.getString("razon_social"));
-                System.out.println("Fecha de apertura: "
-                        + rs.getDate("fecha_apertura"));
-                System.out.println("Dirección: "
-                        + rs.getString("direccion"));
-                System.out.println("Teléfono: "
-                        + rs.getString("telefono"));
-                System.out.println("Email: "
-                        + rs.getString("email"));
-                System.out.println("CIF: "
-                        + rs.getString("cif"));
-            } else {
-                System.out.println("No hay datos de la asociación.");
-            }
+        if (asociacion != null) {
+            System.out.println("Conexión correcta.\n");
+
+            System.out.println("\n==================================");
+            System.out.println("   " + asociacion.getNombre());
+            System.out.println("==================================");
+            System.out.println("Razón social: " + asociacion.getRazonSocial());
+            System.out.println("Fecha de apertura: " + asociacion.getFechaApertura());
+            System.out.println("Dirección: " + asociacion.getDireccion());
+            System.out.println("Teléfono: " + asociacion.getTelefono());
+            System.out.println("Email: " + asociacion.getEmail());
+            System.out.println("CIF: " + asociacion.getCif());
+        } else {
+            System.out.println("No hay datos de la asociación.");
         }
     }
 
@@ -162,7 +144,8 @@ public class App {
                                 System.out.println("Nombre: " + j.getNombre());
                                 System.out.println("Autor 1: " + j.getAutor1());
                                 // Si devuelve "null" de la base de datos, mostrará un texto fijo
-                                System.out.println("Autor 2: " + (j.getAutor2() != null ? j.getAutor2() : "(No tiene segundo autor)"));
+                                System.out.println("Autor 2: " +
+                                        (j.getAutor2() != null ? j.getAutor2() : "(No tiene segundo autor)"));
                                 System.out.println("Descripción: " + j.getDescripcion());
                                 System.out.println("Jugadores: " + j.getMinJugadores() + " - " + j.getMaxJugadores());
                                 System.out.println("Duración: " + j.getDuracion() + " minutos");
@@ -178,15 +161,18 @@ public class App {
 
                                 String estado = j.getEstado();
                                 // Obtener el estado con la primera letra en mayúscula
-                                estado = estado.substring(0, 1).toUpperCase() + estado.substring(1).toLowerCase();
+                                estado = estado.substring(0, 1).toUpperCase() +
+                                        estado.substring(1).toLowerCase();
 
                                 System.out.println("Estado: " + estado);
 
                                 // TODO : CORREGIR ~ Si tiene como propietaria a una socia en vez de una asociación --> No la muestra
                                 if (j.getAsociacionPropietaria() != null) {
-                                    System.out.println("Propietaria: Asociación llamada '" + j.getAsociacionPropietaria().getNombre() + "'");
+                                    System.out.println("Propietaria: Asociación llamada '" +
+                                            j.getAsociacionPropietaria().getNombre() + "'");
                                 } else if (j.getSociaPropietaria() != null) {
-                                    System.out.println("Propietaria: Socia con DNI '" + j.getSociaPropietaria().getDocumento() + "'");
+                                    System.out.println("Propietaria: Socia con DNI '" +
+                                            j.getSociaPropietaria().getDocumento() + "'");
                                 }
 
                                 System.out.println("Fecha de alta: " + j.getFechaAlta());
@@ -241,6 +227,12 @@ public class App {
                         if (propietaria == 1) {
                             // Como solo va a existir 1 asociación en la BD, tendrá que ser la existente
                             Asociacion asociacion = asociacionDao.getAsociacion(1);
+
+                            if (asociacion == null) {
+                                System.out.println("No existe la asociación en la base de datos.");
+                                break;
+                            }
+
                             nuevo.setAsociacionPropietaria(asociacion);
                         } else if (propietaria == 2) {
                             Socia socia;
@@ -334,7 +326,8 @@ public class App {
                                 System.out.println("Juego eliminado correctamente.");
                             } catch (SQLException e) {
                                 // TODO : Mejor hacer una búsqueda de FKs y si tiene relaciones con otras tablas, pues q no se pueda borrar (antes de intentarlo)
-                                System.out.println("No se pudo eliminar el juego. Es posible que tenga partidas asociadas.");
+                                System.out.println("No se pudo eliminar el juego. " +
+                                        "Es posible que tenga partidas asociadas.");
                                 System.out.println("Detalle: " + e.getMessage());
                             }
                         } else {
@@ -397,7 +390,7 @@ public class App {
                                 System.out.println("\nDocumento: " + s.getDocumento());
                                 System.out.println("Nombre: " + s.getNombre());
                                 System.out.println("Apellidos: " + s.getApellido1() + " " +
-                                        (s.getApellido2() != null ? s.getApellido2() : ""));
+                                        (s.getApellido2() != null ? s.getApellido2() : "(No tiene segundo apellido)"));
                                 System.out.println("Teléfono: " + s.getTelefono());
                                 System.out.println("Edad: " + s.getEdad());
                                 System.out.println("Email: " + s.getEmail());
@@ -424,11 +417,13 @@ public class App {
                         JuegoDao juegoDao = new JuegoDaoImpl();
                         List<Juego> todosLosJuegos = juegoDao.listar();
 
-                        for (Juego j : todosLosJuegos) {
-                            if (j.getSociaPropietaria() != null) {
-                                if (j.getSociaPropietaria().getDocumento().equals(documentoConsulta)) {
-                                    System.out.println(j.getId() + " - " + j.getNombre() + " (" + j.getEstado() + ")");
-                                    tieneJuegos = true;
+                        if (!todosLosJuegos.isEmpty()) {
+                            for (Juego j : todosLosJuegos) {
+                                if (j.getSociaPropietaria() != null) {
+                                    if (j.getSociaPropietaria().getDocumento().equals(documentoConsulta)) {
+                                        System.out.println(j.getId() + " - " + j.getNombre() + " (" + j.getEstado() + ")");
+                                        tieneJuegos = true;
+                                    }
                                 }
                             }
                         }
@@ -442,11 +437,16 @@ public class App {
                         PartidaDao partidaDao = new PartidaDaoImpl();
                         List<Partida> todasLasPartidas = partidaDao.listar();
 
-                        for (Partida p : todasLasPartidas) {
-                            for (Socia jugadora : p.getListaJugadorasSocias()) {
-                                if (jugadora.getDocumento().equals(documentoConsulta)) {
-                                    System.out.println("Partida " + p.getId() + " - " + p.getFecha() + " a las " + p.getHora());
-                                    tienePartidas = true;
+                        if (todasLasPartidas.isEmpty()) {
+                            System.out.println("No hay partidas registradas en la base de datos.");
+                        } else {
+                            for (Partida p : todasLasPartidas) {
+                                for (Socia jugadora : p.getListaJugadorasSocias()) {
+                                    if (jugadora.getDocumento().equals(documentoConsulta)) {
+                                        System.out.println("Partida " + p.getId() + " - " +
+                                                p.getFecha() + " a las " + p.getHora());
+                                        tienePartidas = true;
+                                    }
                                 }
                             }
                         }
@@ -640,7 +640,8 @@ public class App {
                         nueva.setHora(leerHora(sc, "Hora de la partida (hh:mm): "));
 
                         int deseados = leerNumeroEnRango(sc,
-                                "Jugadores deseados (entre " + juego.getMinJugadores() + " y " + juego.getMaxJugadores() + "): ",
+                                "Jugadores deseados (entre " + juego.getMinJugadores() +
+                                        " y " + juego.getMaxJugadores() + "): ",
                                 juego.getMinJugadores(),
                                 juego.getMaxJugadores());
 
@@ -676,7 +677,8 @@ public class App {
                         }
 
                         int deseadosNuevos = leerNumeroEnRango(sc,
-                                "Jugadores deseados (entre " + juegoPartida.getMinJugadores() + " y " + juegoPartida.getMaxJugadores() + "): ",
+                                "Jugadores deseados (entre " + juegoPartida.getMinJugadores() + " y " +
+                                        juegoPartida.getMaxJugadores() + "): ",
                                 juegoPartida.getMinJugadores(),
                                 juegoPartida.getMaxJugadores());
 
@@ -706,7 +708,8 @@ public class App {
                             break;
                         }
 
-                        System.out.println("Vas a eliminar la partida " + aBorrar.getId() + " del " + aBorrar.getFecha() + " a las " + aBorrar.getHora());
+                        System.out.println("Vas a eliminar la partida " + aBorrar.getId() + " del " +
+                                aBorrar.getFecha() + " a las " + aBorrar.getHora());
                         String respuesta = leerTexto(sc, "¿Seguro? (s/n): ");
 
                         if (respuesta.equalsIgnoreCase("s")) {
@@ -714,7 +717,8 @@ public class App {
                                 dao.eliminar(idBaja);
                                 System.out.println("Partida eliminada correctamente.");
                             } catch (SQLException e) {
-                                System.out.println("No se pudo eliminar la partida. Es posible que tenga jugadoras inscritas.");
+                                System.out.println("No se pudo eliminar la partida. " +
+                                        "Es posible que tenga jugadoras inscritas.");
                                 System.out.println("Detalle: " + e.getMessage());
                             }
                         } else {
@@ -909,8 +913,8 @@ public class App {
             System.out.println("\nDocumento: " + s.getDocumento());
             System.out.println("Nombre: " + s.getNombre());
             System.out.println("Primer apellido: " + s.getApellido1());
-            // TODO : Comprobar en todo lo relacionado con "Segundo apellido" que saque texto de "(No tiene segundo apellido)"
-            System.out.println("Segundo apellido: " + (s.getApellido2() != null ? s.getApellido2() : "(No tiene segundo apellido)"));
+            System.out.println("Segundo apellido: " +
+                    (s.getApellido2() != null ? s.getApellido2() : "(No tiene segundo apellido)"));
             System.out.println("Teléfono: " + s.getTelefono());
             System.out.println("Edad: " + s.getEdad());
             System.out.println("Email: " + s.getEmail());

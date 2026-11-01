@@ -31,18 +31,19 @@
             <artifactId>mariadb-java-client</artifactId>
             <version>3.3.3</version>
         </dependency>
+        <!-- Dependencia para XStream (XMLs) -->
         <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
             <version>1.4.21</version>
         </dependency>
+        <!-- Dependencia para JSONs -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.13.1</version>
         </dependency>
     </dependencies>
-    <!-- TODO : INVESTIGAR ESTO SIGUIENTE -->
     <build>
         <plugins>
             <plugin>
