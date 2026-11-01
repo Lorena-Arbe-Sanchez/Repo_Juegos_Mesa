@@ -49,13 +49,19 @@ public class PanelJuegos extends JPanel {
         zonaBotones.add(botonBaja);
         add(zonaBotones, BorderLayout.SOUTH);
 
-        // Cuando pulsen un botón, se ejecuta el método que le toca
+        // Cuando pulsen un botón, se ejecuta el método que le toca.
+        // Cada botón llama a SU método: Alta -> abrirAlta, Modificar -> modificar
         botonRefrescar.addActionListener(e -> cargarJuegos());
         botonAlta.addActionListener(e -> abrirAlta());
         botonModificar.addActionListener(e -> modificar());
         botonBaja.addActionListener(e -> darDeBaja());
 
         // Al abrir el panel, se llena la tabla con los juegos de la base de datos
+        cargarJuegos();
+    }
+
+    // NUEVO: permite recargar la tabla desde fuera (lo usa VentanaPrincipal al cambiar de pestaña)
+    public void recargar() {
         cargarJuegos();
     }
 
@@ -87,14 +93,14 @@ public class PanelJuegos extends JPanel {
 
     // Botón Alta: abre el diálogo vacío (null = no hay juego previo)
     private void abrirAlta() {
-        DialogoJuego dialogo = new DialogoJuego();
+        DialogoJuego dialogo = new DialogoJuego(null);
         dialogo.setVisible(true);
 
         // Cuando se cierra el diálogo, se recarga la tabla para ver el juego nuevo
         cargarJuegos();
     }
 
-    // Botón Modificar: abre el diálogo con los datos del juego seleccionado
+    // Botón Modificar: abre el diálogo CON los datos del juego seleccionado
     private void modificar() {
         int filaElegida = tabla.getSelectedRow();
 
@@ -116,7 +122,8 @@ public class PanelJuegos extends JPanel {
                 return;
             }
 
-            DialogoJuego dialogo = new DialogoJuego();
+            // Al pasarle un juego (no null), el diálogo se abre como "Modificar juego"
+            DialogoJuego dialogo = new DialogoJuego(juego);
             dialogo.setVisible(true);
             cargarJuegos();
 
@@ -126,7 +133,7 @@ public class PanelJuegos extends JPanel {
         }
     }
 
-    // Botón Baja: borra el juego seleccionado, pidiendo confirmación
+    // Botón Baja: borra el juego seleccionado (y sus partidas), pidiendo confirmación
     private void darDeBaja() {
         int filaElegida = tabla.getSelectedRow();
 
@@ -140,17 +147,18 @@ public class PanelJuegos extends JPanel {
 
         // Ventana de confirmación con botones Sí / No
         int respuesta = JOptionPane.showConfirmDialog(this,
-                "¿Seguro que quieres eliminar el juego " + nombre + "?",
+                "¿Seguro que quieres eliminar el juego " + nombre + "?\n"
+                        + "Se eliminarán también sus partidas y las inscripciones de esas partidas.",
                 "Confirmar baja", JOptionPane.YES_NO_OPTION);
 
         if (respuesta == JOptionPane.YES_OPTION) {
             try {
                 dao.eliminar(id);
                 cargarJuegos();
+                JOptionPane.showMessageDialog(this, "Juego eliminado correctamente.");
             } catch (SQLException e) {
-                // Si el juego tiene partidas asociadas, MariaDB no deja borrarlo
                 JOptionPane.showMessageDialog(this,
-                        "No se pudo eliminar el juego. Es posible que tenga partidas asociadas.\nDetalle: " + e.getMessage(),
+                        "No se pudo eliminar el juego.\nDetalle: " + e.getMessage(),
                         "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
