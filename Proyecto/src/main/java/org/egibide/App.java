@@ -24,8 +24,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-// TODO : No dejar esta clase con demasiadas líneas; hacer funciones y separar código en diferentes ficheros y carpetas
-
 public class App {
     public static void main(String[] args) throws SQLException {
 
@@ -166,7 +164,6 @@ public class App {
 
                                 System.out.println("Estado: " + estado);
 
-                                // TODO : CORREGIR ~ Si tiene como propietaria a una socia en vez de una asociación --> No la muestra
                                 if (j.getAsociacionPropietaria() != null) {
                                     System.out.println("Propietaria: Asociación llamada '" +
                                             j.getAsociacionPropietaria().getNombre() + "'");
@@ -270,7 +267,6 @@ public class App {
 
                         System.out.println("Escribe los nuevos datos del juego");
 
-                        // TODO : Poner lo de que ya muestre los datos y tal, pero q esta vez los que aparezcan se puedan modificar tal cual; no sobreescribir
                         juego.setNombre(leerTexto(sc, "Nombre: "));
 
                         juego.setAutor1(leerTexto(sc, "Primer autor: "));
@@ -325,7 +321,6 @@ public class App {
                                 dao.eliminar(idBaja);
                                 System.out.println("Juego eliminado correctamente.");
                             } catch (SQLException e) {
-                                // TODO : Mejor hacer una búsqueda de FKs y si tiene relaciones con otras tablas, pues q no se pueda borrar (antes de intentarlo)
                                 System.out.println("No se pudo eliminar el juego. " +
                                         "Es posible que tenga partidas asociadas.");
                                 System.out.println("Detalle: " + e.getMessage());
@@ -608,7 +603,6 @@ public class App {
                             for (Partida p : partidas) {
                                 System.out.println("\nId: " + p.getId());
 
-                                // TODO : No muestra el ID del juego
                                 if (p.getJuego() != null) {
                                     System.out.println("Id del juego: " + p.getJuego().getId());
                                 }
@@ -682,7 +676,6 @@ public class App {
                                 juegoPartida.getMinJugadores(),
                                 juegoPartida.getMaxJugadores());
 
-                        // TODO : Revisar esto, para comprobar otros posibles límites relacionados con las jugadoras ya inscritas
                         int diferencia = deseadosNuevos - partida.getJugadoresDeseados();
                         int plazasNuevas = partida.getPlazasLibres() + diferencia;
 
