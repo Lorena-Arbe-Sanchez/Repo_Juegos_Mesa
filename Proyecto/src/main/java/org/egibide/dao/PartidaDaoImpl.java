@@ -24,14 +24,7 @@ public class PartidaDaoImpl implements PartidaDao {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                Partida partida = new Partida();
-                partida.setId(rs.getInt("id"));
-                partida.setFecha(rs.getDate("fecha").toLocalDate());
-                partida.setHora(rs.getTime("hora").toLocalTime());
-                partida.setJugadoresDeseados(rs.getInt("jugadores_deseados"));
-                partida.setPlazasLibres(rs.getInt("plazas_libres"));
-                // el juego, igual que en buscarPorId
-                lista.add(partida);
+                lista.add(mapearPartida(rs));
             }
         }
         return lista;
@@ -72,13 +65,7 @@ public class PartidaDaoImpl implements PartidaDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    Partida partida = new Partida();
-                    partida.setId(rs.getInt("id"));
-                    partida.setFecha(rs.getDate("fecha").toLocalDate());
-                    partida.setHora(rs.getTime("hora").toLocalTime());
-                    partida.setJugadoresDeseados(rs.getInt("jugadores_deseados"));
-                    partida.setPlazasLibres(rs.getInt("plazas_libres"));
-                    return partida;
+                    return mapearPartida(rs);
                 }
             }
         }
@@ -181,18 +168,3 @@ public class PartidaDaoImpl implements PartidaDao {
         return partida;
     }
 }
-
-/*Si la partida no existe, ninguno de los dos da error:
-el UPDATE o el DELETE simplemente no encuentran ninguna fila y no hacen nada.
-Si quieres detectarlo, executeUpdate() devuelve cuántas filas ha tocado (int filas = ps.executeUpdate();,
-y si es 0, no existía).
-*/
-
-
-/*
-Si la partida tiene jugadoras inscritas en otra tabla con clave foránea,
-el DELETE fallará con una SQLException. Es el caso en el que el enunciado habla de respetar la integridad referencial.
-Las opciones son borrar antes las inscripciones, configurar ON DELETE CASCADE en la tabla,
-o hacer una baja lógica: añadir una columna eliminado y que eliminar sea un UPDATE partidas SET eliminado = true WHERE id = ?.
-Eso lo decidís en el grupo y lo justificáis en la memoria.
- */

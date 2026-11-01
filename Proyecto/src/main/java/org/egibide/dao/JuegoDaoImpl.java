@@ -140,18 +140,20 @@ public class JuegoDaoImpl implements JuegoDao {
                     juego.setUbicacion(rs.getString("ubicacion"));
                     juego.setEstado(rs.getString("estado"));
 
+                    // Obtener la asociación propietaria, si existe.
                     int idAsociacion = rs.getInt("asociacion_id");
+
                     if (!rs.wasNull()) {
-                        Asociacion asociacion = new Asociacion();
-                        asociacion.setId(idAsociacion);
-                        juego.setAsociacionPropietaria(asociacion);
+                        AsociacionDao asociacionDao = new AsociacionDaoImpl();
+                        juego.setAsociacionPropietaria(asociacionDao.getAsociacion(idAsociacion));
                     }
 
+                    // Obtener la socia propietaria, si existe.
                     String documentoSocia = rs.getString("socia_documento");
+
                     if (documentoSocia != null) {
-                        Socia socia = new Socia();
-                        socia.setDocumento(documentoSocia);
-                        juego.setSociaPropietaria(socia);
+                        SociaDao sociaDao = new SociaDaoImpl();
+                        juego.setSociaPropietaria(sociaDao.buscarDocumento(documentoSocia));
                     }
 
                     juego.setFechaAlta(rs.getDate("fecha_alta").toLocalDate());
