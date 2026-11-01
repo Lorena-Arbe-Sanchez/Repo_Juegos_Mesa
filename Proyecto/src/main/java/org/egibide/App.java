@@ -58,7 +58,6 @@ public class App {
                 System.out.println("0. Salir");
                 System.out.print("\nElige una opción: ");
 
-                // TODO : También habrá que poner algún tipo de bucle para q si se teclea algo inválido --> Que se pueda volver a poner
                 opcion = leerInt(sc);
 
                 switch (opcion) {
@@ -217,78 +216,45 @@ public class App {
                         String descripcion = leerTexto(sc, "Descripción del juego: ");
                         nuevo.setDescripcion(descripcion);
 
-                        // TODO : Poner bucle para que en el if de abajo, si da mensaje de error, que se vuelvan a preguntar los números
+                        int[] jugadores = leerJugadores(sc);
+                        nuevo.setMinJugadores(jugadores[0]);
+                        nuevo.setMaxJugadores(jugadores[1]);
 
-                        // TODO : Comprobar en todo lo relacionado con "Número de jugadores" que sea mayor que 0 y que el máximo no puede ser menor que el mínimo
-                        // TODO : En las funciones de "Comprobar" hay que hacerlo a la hora de insertar y modificar
-                        System.out.println("Número mínimo de jugadores: ");
-                        int minJugadores = leerInt(sc);
-
-                        System.out.println("Número máximo de jugadores: ");
-                        int maxJugadores = leerInt(sc);
-
-                        if (maxJugadores < minJugadores) {
-                            System.out.println("El máximo no puede ser menor que el mínimo. No se ha dado de alta el juego.");
-                            break;
-                        }
-                        nuevo.setMinJugadores(minJugadores);
-                        nuevo.setMaxJugadores(maxJugadores);
-
-                        // TODO : Comprobar en todo lo relacionado con "Duración" que sea mayor que 0
-                        System.out.println("Duración del juego (minutos): ");
-                        int duracion = leerInt(sc);
-                        nuevo.setDuracion(duracion);
+                        nuevo.setDuracion(leerPositivo(sc, "Duración del juego (minutos): "));
 
                         String tematica = leerTexto(sc, "Temática del juego: ");
                         nuevo.setTematica(tematica);
 
-                        // TODO : Comprobar en todo lo relacionado con "Competitivo / Cooperativo" que sea 0 o 1
-                        System.out.println("Competitivo = 1 | Cooperativo = 0");
-                        System.out.println("Escoge un número: ");
-                        int competitivo = leerInt(sc);
-                        if (competitivo == 1) {
-                            nuevo.setCompetitivo(true);
-                        } else {
-                            nuevo.setCompetitivo(false);
-                        }
+                        nuevo.setCompetitivo(leerCompetitivo(sc));
 
-                        // TODO : ¿Igual sería mejor poner por rangos tipo "Mayor que..." (porque si no, se complica para las personas que quieren jugar a algo que en principio solo pueden los niños; por ejemplo el Parchís)?
-                        System.out.println("Estantería 1 (>12 años)");
-                        System.out.println("Estantería 2 (5-11 años)");
-                        System.out.println("Estantería 3 (Infantil)");
-                        System.out.println("Escoge la estantería: ");
-                        int ubicacion = leerInt(sc);
+                        String ubicacion = leerUbicacion(sc);
+                        nuevo.setUbicacion(ubicacion);
 
-                        if (ubicacion == 1) {
-                            nuevo.setUbicacion("Estantería 1 (>12 años)");
-                        } else if (ubicacion == 2) {
-                            nuevo.setUbicacion("Estantería 2 (5-11 años)");
-                        } else if (ubicacion == 3) {
-                            nuevo.setUbicacion("Estantería 3 (Infantil)");
-                        } else {
-                            System.out.println("Estantería no válida. No se ha dado de alta el juego.");
-                            break;
-                        }
-
+                        // Se le asignará automáticamente el estado "disponible" y la fecha actual
                         nuevo.setEstado("disponible");
                         nuevo.setFechaAlta(LocalDate.now());
 
-                        System.out.println("Propietaria del juego: 1 = Asociación | 2 = Socia");
-                        System.out.println("Escoge un número: ");
-                        int propietaria = leerInt(sc);
+                        int propietaria = leerNumeroEnRango(sc,
+                                "Propietaria del juego: 1 = Asociación | 2 = Socia: ",
+                                1, 2);
 
                         if (propietaria == 1) {
                             // Como solo va a existir 1 asociación en la BD, tendrá que ser la existente
                             Asociacion asociacion = asociacionDao.getAsociacion(1);
                             nuevo.setAsociacionPropietaria(asociacion);
                         } else if (propietaria == 2) {
-                            String documento = leerTexto(sc, "Documento de la socia propietaria: ");
-                            Socia socia = sociaDao.buscarDocumento(documento);
+                            Socia socia;
 
-                            if (socia == null) {
-                                System.out.println("No existe ninguna socia con ese documento. No se ha dado de alta el juego.");
-                                break;
-                            }
+                            do {
+                                String documento = leerDocumento(sc);
+                                socia = sociaDao.buscarDocumento(documento);
+
+                                if (socia == null) {
+                                    System.out.println("No existe ninguna socia con ese documento.");
+                                }
+
+                            } while (socia == null);
+
                             nuevo.setSociaPropietaria(socia);
                         } else {
                             System.out.println("Opción no válida. No se ha dado de alta el juego.");
@@ -301,8 +267,7 @@ public class App {
                     }
 
                     case 3: {
-                        System.out.println("Id del juego a modificar: ");
-                        int idModificar = leerInt(sc);
+                        int idModificar = leerPositivo(sc, "Id del juego a modificar: ");
 
                         Juego juego = dao.buscarPorId(idModificar);
 
@@ -328,67 +293,22 @@ public class App {
 
                         juego.setDescripcion(leerTexto(sc, "Descripción: "));
 
-                        System.out.println("Número mínimo de jugadores: ");
-                        int minNuevo = leerInt(sc);
+                        int[] jugadores = leerJugadores(sc);
+                        juego.setMinJugadores(jugadores[0]);
+                        juego.setMaxJugadores(jugadores[1]);
 
-                        System.out.println("Número máximo de jugadores: ");
-                        int maxNuevo = leerInt(sc);
-
-                        if (maxNuevo < minNuevo) {
-                            System.out.println("El máximo no puede ser menor que el mínimo. No se ha modificado el juego.");
-                            break;
-                        }
-                        juego.setMinJugadores(minNuevo);
-                        juego.setMaxJugadores(maxNuevo);
-
-                        System.out.println("Duración (minutos): ");
-                        juego.setDuracion(leerInt(sc));
+                        juego.setDuracion(leerPositivo(sc, "Duración del juego (minutos): "));
 
                         System.out.println("Temática: ");
                         juego.setTematica(leerTexto(sc, ""));
 
-                        System.out.println("Competitivo = 1 | Cooperativo = 0");
-                        System.out.println("Escoge un número: ");
-                        int competitivoNuevo = leerInt(sc);
-                        if (competitivoNuevo == 1) {
-                            juego.setCompetitivo(true);
-                        } else {
-                            juego.setCompetitivo(false);
-                        }
+                        juego.setCompetitivo(leerCompetitivo(sc));
 
-                        System.out.println("Estantería 1 (>12 años)");
-                        System.out.println("Estantería 2 (5-11 años)");
-                        System.out.println("Estantería 3 (Infantil)");
-                        System.out.println("Escoge la estantería: ");
-                        int ubicacionNueva = leerInt(sc);
+                        String ubicacion = leerUbicacion(sc);
+                        juego.setUbicacion(ubicacion);
 
-                        if (ubicacionNueva == 1) {
-                            juego.setUbicacion("Estantería 1 (>12 años)");
-                        } else if (ubicacionNueva == 2) {
-                            juego.setUbicacion("Estantería 2 (5-11 años)");
-                        } else if (ubicacionNueva == 3) {
-                            juego.setUbicacion("Estantería 3 (Infantil)");
-                        } else {
-                            System.out.println("Estantería no válida. No se ha modificado el juego.");
-                            break;
-                        }
-
-                        System.out.println("1. Disponible");
-                        System.out.println("2. Prestado");
-                        System.out.println("3. En reparación");
-                        System.out.println("Escoge el estado: ");
-                        int estadoNuevo = leerInt(sc);
-
-                        if (estadoNuevo == 1) {
-                            juego.setEstado("disponible");
-                        } else if (estadoNuevo == 2) {
-                            juego.setEstado("prestado");
-                        } else if (estadoNuevo == 3) {
-                            juego.setEstado("en reparación");
-                        } else {
-                            System.out.println("Estado no válido. No se ha modificado el juego.");
-                            break;
-                        }
+                        String estado = leerEstado(sc);
+                        juego.setEstado(estado);
 
                         dao.actualizar(juego);
                         System.out.println("Juego modificado correctamente.");
@@ -396,8 +316,7 @@ public class App {
                     }
 
                     case 4: {
-                        System.out.println("Id del juego a eliminar: ");
-                        int idBaja = leerInt(sc);
+                        int idBaja = leerPositivo(sc, "Id del juego a eliminar: ");
 
                         Juego aBorrar = dao.buscarPorId(idBaja);
 
@@ -489,7 +408,7 @@ public class App {
                     }
 
                     case 2: {
-                        String documentoConsulta = leerTexto(sc, "Documento de la socia: ");
+                        String documentoConsulta = leerDocumento(sc);
 
                         Socia consulta = dao.buscarDocumento(documentoConsulta);
 
@@ -541,12 +460,20 @@ public class App {
                     case 3: {
                         Socia nueva = new Socia();
 
-                        String documento = leerDocumento(sc);
+                        String documento;
 
-                        if (dao.buscarDocumento(documento) != null) {
-                            System.out.println("Ya existe una socia con ese documento.");
-                            break;
-                        }
+                        Socia existente;
+
+                        do {
+                            documento = leerDocumento(sc);
+                            existente = dao.buscarDocumento(documento);
+
+                            if (existente != null) {
+                                System.out.println("Ya existe una socia con ese documento.");
+                            }
+
+                        } while (existente != null);
+
                         nueva.setDocumento(documento);
 
                         nueva.setNombre(leerTexto(sc, "Nombre: "));
@@ -563,9 +490,7 @@ public class App {
 
                         nueva.setTelefono(leerTelefono(sc));
 
-                        // TODO : Comprobar en todo lo relacionado con "Edad" que sea mayor que 0
-                        System.out.println("Edad: ");
-                        nueva.setEdad(leerInt(sc));
+                        nueva.setEdad(leerPositivo(sc, "Edad: "));
 
                         nueva.setEmail(leerEmail(sc));
 
@@ -575,7 +500,7 @@ public class App {
                     }
 
                     case 4: {
-                        String documentoModificar = leerTexto(sc, "Documento de la socia a modificar: ");
+                        String documentoModificar = leerDocumento(sc);
 
                         Socia socia = dao.buscarDocumento(documentoModificar);
 
@@ -600,8 +525,7 @@ public class App {
 
                         socia.setTelefono(leerTelefono(sc));
 
-                        System.out.println("Edad: ");
-                        socia.setEdad(leerInt(sc));
+                        socia.setEdad(leerPositivo(sc, "Edad: "));
 
                         socia.setEmail(leerEmail(sc));
 
@@ -611,7 +535,7 @@ public class App {
                     }
 
                     case 5: {
-                        String documentoBaja = leerTexto(sc, "Documento de la socia a dar de baja: ");
+                        String documentoBaja = leerDocumento(sc);
 
                         Socia aBorrar = dao.buscarDocumento(documentoBaja);
 
@@ -699,8 +623,7 @@ public class App {
                     }
 
                     case 2: {
-                        System.out.println("Id del juego de la partida: ");
-                        int idJuego = leerInt(sc);
+                        int idJuego = leerPositivo(sc, "Id del juego de la partida: ");
 
                         Juego juego = juegoDao.buscarPorId(idJuego);
 
@@ -712,19 +635,14 @@ public class App {
                         Partida nueva = new Partida();
                         nueva.setJuego(juego);
 
-                        String textoFecha = leerTexto(sc, "Fecha de la partida (aaaa-mm-dd): ");
-                        nueva.setFecha(LocalDate.parse(textoFecha));
+                        nueva.setFecha(leerFechaFutura(sc, "Fecha de la partida (aaaa-mm-dd): "));
 
-                        String textoHora = leerTexto(sc, "Hora de la partida (hh:mm): ");
-                        nueva.setHora(LocalTime.parse(textoHora));
+                        nueva.setHora(leerHora(sc, "Hora de la partida (hh:mm): "));
 
-                        System.out.println("Jugadores deseados (entre " + juego.getMinJugadores() + " y " + juego.getMaxJugadores() + "): ");
-                        int deseados = leerInt(sc);
-
-                        if (deseados < juego.getMinJugadores() || deseados > juego.getMaxJugadores()) {
-                            System.out.println("Ese número está fuera del rango del juego. No se ha dado de alta la partida.");
-                            break;
-                        }
+                        int deseados = leerNumeroEnRango(sc,
+                                "Jugadores deseados (entre " + juego.getMinJugadores() + " y " + juego.getMaxJugadores() + "): ",
+                                juego.getMinJugadores(),
+                                juego.getMaxJugadores());
 
                         nueva.setJugadoresDeseados(deseados);
                         nueva.setPlazasLibres(deseados);
@@ -735,8 +653,7 @@ public class App {
                     }
 
                     case 3: {
-                        System.out.println("Id de la partida a modificar: ");
-                        int idModificar = leerInt(sc);
+                        int idModificar = leerPositivo(sc, "Id de la partida a modificar: ");
 
                         Partida partida = dao.buscarporId(idModificar);
 
@@ -747,11 +664,9 @@ public class App {
 
                         System.out.println("Escribe los nuevos datos de la partida");
 
-                        String fechaNueva = leerTexto(sc, "Fecha (aaaa-mm-dd): ");
-                        partida.setFecha(LocalDate.parse(fechaNueva));
+                        partida.setFecha(leerFechaFutura(sc, "Fecha (aaaa-mm-dd): "));
 
-                        String horaNueva = leerTexto(sc, "Hora (hh:mm): ");
-                        partida.setHora(LocalTime.parse(horaNueva));
+                        partida.setHora(leerHora(sc, "Hora (hh:mm): "));
 
                         Juego juegoPartida = juegoDao.buscarPorId(partida.getJuego().getId());
 
@@ -760,14 +675,12 @@ public class App {
                             break;
                         }
 
-                        System.out.println("Jugadores deseados (entre " + juegoPartida.getMinJugadores() + " y " + juegoPartida.getMaxJugadores() + "): ");
-                        int deseadosNuevos = leerInt(sc);
+                        int deseadosNuevos = leerNumeroEnRango(sc,
+                                "Jugadores deseados (entre " + juegoPartida.getMinJugadores() + " y " + juegoPartida.getMaxJugadores() + "): ",
+                                juegoPartida.getMinJugadores(),
+                                juegoPartida.getMaxJugadores());
 
-                        if (deseadosNuevos < juegoPartida.getMinJugadores() || deseadosNuevos > juegoPartida.getMaxJugadores()) {
-                            System.out.println("Ese número está fuera del rango del juego. No se ha modificado la partida.");
-                            break;
-                        }
-
+                        // TODO : Revisar esto, para comprobar otros posibles límites relacionados con las jugadoras ya inscritas
                         int diferencia = deseadosNuevos - partida.getJugadoresDeseados();
                         int plazasNuevas = partida.getPlazasLibres() + diferencia;
 
@@ -784,8 +697,7 @@ public class App {
                     }
 
                     case 4: {
-                        System.out.println("Id de la partida a dar de baja: ");
-                        int idBaja = leerInt(sc);
+                        int idBaja = leerPositivo(sc, "Id de la partida a dar de baja: ");
 
                         Partida aBorrar = dao.buscarporId(idBaja);
 
@@ -821,9 +733,6 @@ public class App {
                     default:
                         System.out.println("Opción no válida.");
                 }
-            } catch (DateTimeParseException e) {
-                System.out.println("Fecha u hora con formato incorrecto. Ejemplos: 2026-11-15 y 18:30");
-                opcion = -1;
             } catch (SQLException e) {
                 System.out.println("Error en la base de datos: " + e.getMessage());
                 opcion = -1;
@@ -868,13 +777,7 @@ public class App {
                     }
 
                     case 3: {
-                        System.out.print("Introduce el número de jugadores: ");
-                        int numero = leerInt(sc);
-
-                        if (numero <= 0) {
-                            System.out.println("El número de jugadores debe ser mayor que 0.");
-                            break;
-                        }
+                        int numero = leerPositivo(sc, "Introduce el número de jugadores: ");
 
                         List<Juego> resultados = dao.buscarPorNumeroJugadores(numero);
                         mostrarResultadosJuegos(resultados);
@@ -973,8 +876,7 @@ public class App {
                         break;
                     }
                     case 3: {
-                        System.out.print("Introduce el segundo apellido de la socia: ");
-                        String apellido = sc.nextLine().trim();
+                        String apellido = leerTexto(sc, "Introduce el segundo apellido de la socia: ");
 
                         List<Socia> resultados = dao.buscarPorSegundoApellido(apellido);
                         mostrarResultadosSocias(resultados);
@@ -1041,7 +943,7 @@ public class App {
                         break;
                     }
                     case 2: {
-                        LocalDate fecha = LocalDate.parse(leerTexto(sc, "Introduce la fecha (AAAA-MM-DD): "));
+                        LocalDate fecha = leerFecha(sc, "Introduce la fecha (AAAA-MM-DD): ");
 
                         List<Partida> resultados = dao.buscarPorFecha(fecha);
                         mostrarResultadosPartidas(resultados);
@@ -1053,9 +955,6 @@ public class App {
                         System.out.println("Opción no válida.");
                 }
 
-            } catch (DateTimeParseException e) {
-                System.out.println("La fecha debe tener el formato AAAA-MM-DD.");
-                opcion = -1;
             } catch (SQLException e) {
                 System.out.println("Error al buscar partidas: " + e.getMessage());
                 opcion = -1;
@@ -1151,10 +1050,10 @@ public class App {
                     break;
                 default:
                     System.out.println("Opción no válida.");
-                    return;
+                    break;
             }
 
-            if (opcion != 0) {
+            if (opcion >= 1 && opcion <= 9) {
                 System.out.println("Exportación finalizada.\n");
             }
         }
@@ -1163,11 +1062,12 @@ public class App {
 
     /* ----- Funciones auxiliares ----- */
 
+    // Comprobar que el dato es numérico
     public static int leerInt(Scanner sc) {
-
         while (!sc.hasNextInt()) {
             System.out.println("Error: debes introducir un número.");
             sc.nextLine();
+            System.out.print("Vuelve a intentarlo: ");
         }
 
         int numero = sc.nextInt();
@@ -1176,6 +1076,24 @@ public class App {
         return numero;
     }
 
+    // Leer un número entero mayor que 0
+    public static int leerPositivo(Scanner sc, String mensaje) {
+        int numero;
+
+        do {
+            System.out.print(mensaje);
+            numero = leerInt(sc);
+
+            if (numero <= 0) {
+                System.out.println("Error: el número debe ser mayor que 0.");
+            }
+
+        } while (numero <= 0);
+
+        return numero;
+    }
+
+    // Comprobar que se ha proporcionado un texto
     public static String leerTexto(Scanner sc, String mensaje) {
 
         String texto;
@@ -1185,12 +1103,160 @@ public class App {
             texto = sc.nextLine();
 
             if (texto.trim().isEmpty()) {
-                System.out.println("El campo no puede estar vacío.");
+                System.out.println("Error: el campo no puede estar vacío.");
             }
 
         } while (texto.trim().isEmpty());
 
         return texto;
+    }
+
+    // Leer una fecha válida
+    public static LocalDate leerFecha(Scanner sc, String mensaje) {
+
+        while (true) {
+            try {
+                System.out.print(mensaje);
+                return LocalDate.parse(sc.nextLine());
+
+            } catch (DateTimeParseException e) {
+                System.out.println("Error: introduce una fecha válida (AAAA-MM-DD).");
+            }
+        }
+    }
+
+    // Leer una fecha válida y que no sea pasada
+    public static LocalDate leerFechaFutura(Scanner sc, String mensaje) {
+        while (true) {
+            LocalDate fecha = leerFecha(sc, mensaje);
+
+            if (fecha.isBefore(LocalDate.now())) {
+                System.out.println("Error: la fecha no puede ser anterior a hoy.");
+            } else {
+                return fecha;
+            }
+        }
+    }
+
+    // Leer una hora válida
+    public static LocalTime leerHora(Scanner sc, String mensaje) {
+
+        while (true) {
+            try {
+                System.out.print(mensaje);
+                return LocalTime.parse(sc.nextLine());
+
+            } catch (DateTimeParseException e) {
+                System.out.println("Error: introduce una hora válida (HH:mm).");
+            }
+        }
+    }
+
+    // Leer el número mínimo y máximo de jugadores
+    public static int[] leerJugadores(Scanner sc) {
+        int min;
+        int max;
+
+        do {
+            min = leerPositivo(sc, "Número mínimo de jugadores: ");
+            max = leerPositivo(sc, "Número máximo de jugadores: ");
+
+            if (max < min) {
+                System.out.println("El máximo no puede ser menor que el mínimo.");
+            }
+
+        } while (max < min);
+
+        return new int[]{min, max};
+    }
+
+    // Leer una opción que solo puede ser 0 o 1
+    public static boolean leerCompetitivo(Scanner sc) {
+        int opcion;
+
+        do {
+            System.out.println("Competitivo = 1 | Cooperativo = 0");
+            System.out.print("Escoge un número: ");
+            opcion = leerInt(sc);
+
+            if (opcion != 0 && opcion != 1) {
+                System.out.println("Opción incorrecta. Introduce 0 o 1.");
+            }
+
+        } while (opcion != 0 && opcion != 1);
+
+        return opcion == 1;
+    }
+
+    // Leer un número entero dentro de un rango
+    public static int leerNumeroEnRango(Scanner sc, String mensaje, int min, int max) {
+        int numero;
+
+        do {
+            System.out.print(mensaje);
+            numero = leerInt(sc);
+
+            if (numero < min || numero > max) {
+                System.out.println("Error: introduce un número entre " + min + " y " + max + ".");
+            }
+
+        } while (numero < min || numero > max);
+
+        return numero;
+    }
+
+    // Leer una ubicación válida para el juego
+    public static String leerUbicacion(Scanner sc) {
+        int ubicacion;
+
+        do {
+            System.out.println("Estantería 1 (>12 años)");
+            System.out.println("Estantería 2 (5-11 años)");
+            System.out.println("Estantería 3 (Infantil)");
+            System.out.print("Escoge la estantería: ");
+
+            ubicacion = leerInt(sc);
+
+            if (ubicacion < 1 || ubicacion > 3) {
+                System.out.println("Error: escoge una estantería entre 1 y 3.");
+            }
+
+        } while (ubicacion < 1 || ubicacion > 3);
+
+        if (ubicacion == 1) {
+            return "Estantería 1 (>12 años)";
+        } else if (ubicacion == 2) {
+            return "Estantería 2 (5-11 años)";
+        } else {
+            return "Estantería 3 (Infantil)";
+        }
+    }
+
+    // Leer un estado válido para el juego
+    public static String leerEstado(Scanner sc) {
+        int estado;
+
+        do {
+            System.out.println("1. Disponible");
+            System.out.println("2. Prestado");
+            System.out.println("3. En reparación");
+            System.out.print("Escoge el estado: ");
+
+            estado = leerInt(sc);
+
+            if (estado < 1 || estado > 3) {
+                System.out.println("Error: escoge un estado entre 1 y 3.");
+            }
+
+        } while (estado < 1 || estado > 3);
+
+        if (estado == 1) {
+            return "disponible";
+        } else if (estado == 2) {
+            return "prestado";
+        } else {
+            return "en reparación";
+        }
     }
 
     public static String leerDocumento(Scanner sc) {
@@ -1213,7 +1279,7 @@ public class App {
                 return documento;
             }
 
-            System.out.println("Documento incorrecto. Introduce un DNI, NIE o pasaporte válido.");
+            System.out.println("Error: documento incorrecto. Introduce un DNI, NIE o pasaporte válido.");
         }
     }
 
@@ -1229,7 +1295,7 @@ public class App {
                 return email;
             }
 
-            System.out.println("Email incorrecto.");
+            System.out.println("Error: email incorrecto.");
         }
     }
 
@@ -1245,7 +1311,7 @@ public class App {
                 return telefono;
             }
 
-            System.out.println("El teléfono debe tener 9 números.");
+            System.out.println("Error: el teléfono debe tener 9 números.");
         }
     }
 }
