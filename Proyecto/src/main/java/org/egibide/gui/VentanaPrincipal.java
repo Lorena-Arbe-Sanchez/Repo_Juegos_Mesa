@@ -1,7 +1,6 @@
 package org.egibide.gui;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 public class VentanaPrincipal extends JFrame {
@@ -17,7 +16,8 @@ public class VentanaPrincipal extends JFrame {
         JTabbedPane pestanas = new JTabbedPane();
         pestanas.addTab("Juegos", new PanelJuegos());
         pestanas.addTab("Socias", new PanelSocias());
-        pestanas.addTab("Partidas", new JPanel()); // provisional, se sustituirá por PanelPartidas
+        pestanas.addTab("Partidas", new PanelPartidas()); // MODIFICADO
+        pestanas.addTab("Asociación", new PanelAsociacion());
 
         add(pestanas);
     }

@@ -87,7 +87,7 @@ public class PanelJuegos extends JPanel {
 
     // Botón Alta: abre el diálogo vacío (null = no hay juego previo)
     private void abrirAlta() {
-        DialogoJuego dialogo = new DialogoJuego(null);
+        DialogoJuego dialogo = new DialogoJuego();
         dialogo.setVisible(true);
 
         // Cuando se cierra el diálogo, se recarga la tabla para ver el juego nuevo
@@ -116,7 +116,7 @@ public class PanelJuegos extends JPanel {
                 return;
             }
 
-            DialogoJuego dialogo = new DialogoJuego(juego);
+            DialogoJuego dialogo = new DialogoJuego();
             dialogo.setVisible(true);
             cargarJuegos();
 

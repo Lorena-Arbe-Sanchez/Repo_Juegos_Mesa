@@ -31,7 +31,7 @@ public class PanelSocias extends JPanel {
     public PanelSocias() {
         setLayout(new BorderLayout());
 
-        // Tabla 
+        // Tabla
         String[] columnas = {"Documento", "Nombre", "Apellidos", "Teléfono", "Edad", "Email"};
         modeloTabla = new DefaultTableModel(columnas, 0);
         tabla = new JTable(modeloTabla);
