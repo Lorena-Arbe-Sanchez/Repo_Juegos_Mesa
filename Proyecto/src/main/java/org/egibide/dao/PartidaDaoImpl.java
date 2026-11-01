@@ -1,5 +1,6 @@
 package org.egibide.dao;
 
+import org.egibide.idao.InscripcionDao;
 import org.egibide.idao.JuegoDao;
 import org.egibide.idao.PartidaDao;
 import org.egibide.models.Partida;
@@ -17,6 +18,7 @@ public class PartidaDaoImpl implements PartidaDao {
     // NUEVO: se usa para cargar el juego completo de cada partida
     private JuegoDao juegoDao = new JuegoDaoImpl();
 
+    private InscripcionDao inscripcionDao = new InscripcionDaoImpl();
     @Override
     public List<Partida> listar() throws SQLException {
         List<Partida> lista = new ArrayList<>();
@@ -36,6 +38,9 @@ public class PartidaDaoImpl implements PartidaDao {
 
                 // NUEVO: carga el juego de la partida a partir de su id
                 partida.setJuego(juegoDao.buscarPorId(rs.getInt("juego_id")));
+                // NUEVO: carga las socias e invitadas de la partida con su id
+                partida.setListaJugadorasSocias(inscripcionDao.listarSocias(partida.getId()));
+                partida.setListaJugadorasInvitadas(inscripcionDao.listarInvitadas(partida.getId()));
 
                 // Las jugadoras se cargarán cuando tengamos el DAO de inscripciones
                 lista.add(partida);
