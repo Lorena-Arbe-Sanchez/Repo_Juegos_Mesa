@@ -2,8 +2,6 @@ package org.egibide.models;
 
 import java.time.LocalDate;
 
-// TODO : Si hacemos la interfaz; habrá q añadir columna de img (tipo enlace src) y cambiar tanto aquí como en phpMyAdmin
-
 public class Asociacion {
 
     private int id;
@@ -92,19 +90,5 @@ public class Asociacion {
 
     public void setCif(String cif) {
         this.cif = cif;
-    }
-
-    @Override
-    public String toString() {
-        return "Asociacion{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", razonSocial='" + razonSocial + '\'' +
-                ", fechaApertura=" + fechaApertura +
-                ", direccion='" + direccion + '\'' +
-                ", telefono='" + telefono + '\'' +
-                ", email='" + email + '\'' +
-                ", cif='" + cif + '\'' +
-                '}';
     }
 }

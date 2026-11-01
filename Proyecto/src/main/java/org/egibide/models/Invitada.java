@@ -79,17 +79,4 @@ public class Invitada {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    @Override
-    public String toString() {
-        return "Invitada{" +
-                "documento='" + documento + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", apellido1='" + apellido1 + '\'' +
-                ", apellido2='" + apellido2 + '\'' +
-                ", telefono='" + telefono + '\'' +
-                ", edad=" + edad +
-                ", email='" + email + '\'' +
-                '}';
-    }
 }

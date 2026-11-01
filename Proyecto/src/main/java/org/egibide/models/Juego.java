@@ -25,7 +25,6 @@ public class Juego {
     public Juego() {
     }
 
-    // TODO : Revisar si crear más constructores en todas las clases (igual es necesario que tengan menos datos al empezar)
     // Constructor con todos los atributos
     public Juego(int id, String nombre, String autor1, String autor2, String descripcion, int minJugadores,
                  int maxJugadores, int duracion, String tematica, boolean competitivo, String ubicacion,
@@ -167,28 +166,5 @@ public class Juego {
 
     public void setFechaAlta(LocalDate fechaAlta) {
         this.fechaAlta = fechaAlta;
-    }
-
-    // TODO : Repasar este para ver si muestra bien los datos y si no es recursivo por FK-s
-    // Función "toString" para poder mostrar los datos
-    @Override
-    public String toString() {
-        return "Juego{" +
-                "id=" + id +
-                ", nombre='" + nombre + '\'' +
-                ", autor1='" + autor1 + '\'' +
-                ", autor2='" + autor2 + '\'' +
-                ", descripcion='" + descripcion + '\'' +
-                ", minJugadores=" + minJugadores +
-                ", maxJugadores=" + maxJugadores +
-                ", duracion=" + duracion +
-                ", tematica='" + tematica + '\'' +
-                ", competitivo=" + competitivo +
-                ", ubicacion='" + ubicacion + '\'' +
-                ", estado='" + estado + '\'' +
-                ", asociacionPropietaria=" + asociacionPropietaria +
-                ", sociaPropietaria=" + sociaPropietaria +
-                ", fechaAlta=" + fechaAlta +
-                '}';
     }
 }

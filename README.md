@@ -82,9 +82,6 @@ Para ejecutar el proyecto se necesita:
 6. Comprobar que las dependencias necesarias están disponibles.
 7. Ejecutar la clase principal de la aplicación.
 
-**Importante:** la base de datos debe estar alojada en un servidor accesible por red, no únicamente en la máquina
-cliente.
-
 ## 📁 Estructura del proyecto
 
 La estructura definitiva dependerá de la organización del código fuente. El repositorio incluirá los elementos
@@ -125,10 +122,6 @@ La memoria del proyecto recogerá:
 
 - [Lorena Arbé Sánchez](https://github.com/Lorena-Arbe-Sanchez)
 - [Aitor Amaury Farinango Rojas](https://github.com/AitorAmaury)
-
-## 📅 Fecha de entrega
-
-25 de octubre de 2026.
 
 ---
 

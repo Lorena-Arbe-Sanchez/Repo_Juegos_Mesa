@@ -118,20 +118,4 @@ public class Partida {
     public void setGanadorasInvitadas(List<Invitada> ganadorasInvitadas) {
         this.ganadorasInvitadas = ganadorasInvitadas;
     }
-
-    @Override
-    public String toString() {
-        return "Partida{" +
-                "id=" + id +
-                ", listaJugadorasSocias=" + listaJugadorasSocias +
-                ", listaJugadorasInvitadas=" + listaJugadorasInvitadas +
-                ", juego=" + juego +
-                ", fecha=" + fecha +
-                ", hora=" + hora +
-                ", jugadoresDeseados=" + jugadoresDeseados +
-                ", plazasLibres=" + plazasLibres +
-                ", ganadorasSocias=" + ganadorasSocias +
-                ", ganadorasInvitadas=" + ganadorasInvitadas +
-                '}';
-    }
 }

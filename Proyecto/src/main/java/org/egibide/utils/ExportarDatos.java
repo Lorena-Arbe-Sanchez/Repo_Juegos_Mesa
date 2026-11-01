@@ -17,8 +17,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO : ¿Añadir funciones para exportar datos también de tablas secundarias? ("partida_invitada" y "partida_socia")
-
 public class ExportarDatos {
 
     // Exportar los juegos a XML
