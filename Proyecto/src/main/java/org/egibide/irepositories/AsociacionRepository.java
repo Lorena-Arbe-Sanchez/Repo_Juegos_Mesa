@@ -6,4 +6,6 @@ import org.egibide.models.Asociacion;
 public interface AsociacionRepository {
 
     Asociacion getAsociacion(int asociacion_id);
+
+    // TODO : Mirar qué hay que poner aquí y en el "AsociacionRepositoryImpl"
 }

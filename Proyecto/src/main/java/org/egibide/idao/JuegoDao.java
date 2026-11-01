@@ -8,8 +8,19 @@ import java.util.List;
 public interface JuegoDao {
 
     List<Juego> listar() throws SQLException;
+
     int insertar(Juego juego) throws SQLException;
+
     Juego buscarPorId(int id) throws SQLException;
+
     void actualizar(Juego juego) throws SQLException;
+
     void eliminar(int id) throws SQLException;
+
+    // Métodos de búsquedas avanzadas
+    List<Juego> buscarPorNombre(String nombre) throws SQLException;
+
+    List<Juego> buscarPorTematica(String tematica) throws SQLException;
+
+    List<Juego> buscarPorNumeroJugadores(int numero) throws SQLException;
 }
