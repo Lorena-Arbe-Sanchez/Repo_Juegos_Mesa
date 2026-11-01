@@ -14,6 +14,9 @@ import org.egibide.idao.SociaDao;
 import org.egibide.models.Asociacion;
 import org.egibide.models.Partida;
 import org.egibide.models.Socia;
+import org.egibide.utils.GestorUsuarios; //nuevo
+import org.egibide.utils.RegistroSesiones;
+import java.io.IOException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -30,6 +33,13 @@ public class App {
     public static void main(String[] args) throws SQLException {
 
         try (Scanner sc = new Scanner(System.in)) {
+
+            // NUEVO: control de acceso. Si no consigue entrar, el programa termina
+            String usuario = iniciarSesion(sc);
+
+            if (usuario == null) {
+                return;
+            }
 
             // Mostrar los datos de la asociación al iniciar la aplicación
             mostrarDatosAsociacion();
@@ -77,6 +87,9 @@ public class App {
 
             } while (opcion != 0);
 
+            // NUEVO: se apunta la salida en el registro de sesiones
+            RegistroSesiones.registrar(usuario, "SALIDA");
+
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
@@ -105,6 +118,66 @@ public class App {
         } else {
             System.out.println("No hay datos de la asociación.");
         }
+    }
+
+    // NUEVO: pide usuario y contraseña. Devuelve el usuario si entra, o null si no
+    private static String iniciarSesion(Scanner sc) {
+        try {
+            // Si todavía no existe ningún usuario, se crea el primero
+            if (!GestorUsuarios.hayUsuarios()) {
+                System.out.println("\n===== PRIMER ACCESO: CREA UN USUARIO =====");
+
+                System.out.println("Usuario: ");
+                String usuarioNuevo = sc.nextLine().trim();
+
+                System.out.println("Contraseña (mínimo 4 caracteres): ");
+                String contrasenaNueva = sc.nextLine();
+
+                System.out.println("Repite la contraseña: ");
+                String repetida = sc.nextLine();
+
+                if (usuarioNuevo.isEmpty() || contrasenaNueva.length() < 4) {
+                    System.out.println("Usuario vacío o contraseña demasiado corta.");
+                    return null;
+                }
+
+                if (!contrasenaNueva.equals(repetida)) {
+                    System.out.println("Las contraseñas no coinciden.");
+                    return null;
+                }
+
+                GestorUsuarios.registrarUsuario(usuarioNuevo, contrasenaNueva);
+                RegistroSesiones.registrar(usuarioNuevo, "USUARIO CREADO");
+                RegistroSesiones.registrar(usuarioNuevo, "ENTRADA");
+                return usuarioNuevo;
+            }
+
+            // Si ya hay usuarios, tiene 3 intentos para identificarse
+            for (int intento = 1; intento <= 3; intento++) {
+                System.out.println("\n===== INICIAR SESIÓN =====");
+
+                System.out.println("Usuario: ");
+                String usuario = sc.nextLine().trim();
+
+                System.out.println("Contraseña: ");
+                String contrasena = sc.nextLine();
+
+                if (GestorUsuarios.comprobar(usuario, contrasena)) {
+                    RegistroSesiones.registrar(usuario, "ENTRADA");
+                    return usuario;
+                }
+
+                RegistroSesiones.registrar(usuario, "ACCESO DENEGADO");
+                System.out.println("Usuario o contraseña incorrectos. Intentos restantes: " + (3 - intento));
+            }
+
+            System.out.println("Demasiados intentos fallidos.");
+
+        } catch (IOException e) {
+            System.out.println("Error al leer o guardar las credenciales: " + e.getMessage());
+        }
+
+        return null;
     }
 
     // Menú de juegos
