@@ -30,6 +30,11 @@ public class PanelPartidas extends JPanel {
     private DefaultTableModel modeloTabla;
     private JTable tabla;
 
+    // Permite recargar la tabla desde fuera (lo usa VentanaPrincipal al cambiar de pestaña)
+    public void recargar() {
+        cargarPartidas();
+    }
+
     public PanelPartidas() {
         setLayout(new BorderLayout());
 

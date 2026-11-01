@@ -28,6 +28,10 @@ public class PanelSocias extends JPanel {
     private DefaultTableModel modeloTabla;
     private JTable tabla;
 
+    // Permite recargar la tabla desde fuera (lo usa VentanaPrincipal al cambiar de pestaña)
+    public void recargar() {
+        cargarSocias();
+    }
     public PanelSocias() {
         setLayout(new BorderLayout());
 
