@@ -102,16 +102,39 @@ public class PartidaDaoImpl implements PartidaDao {
         return null;
     }
 
-    // ambos solo hacen la acción, no devuelven nada más:
+    // Borra la partida y, antes, sus inscripciones
     @Override
     public void eliminar(int id) throws SQLException {
-
-        String sql = "DELETE FROM partida WHERE id = ?";
+        String sqlSocias = "DELETE FROM partida_socia WHERE partida_id = ?";
+        String sqlInvitadas = "DELETE FROM partida_invitada WHERE partida_id = ?";
+        String sqlPartida = "DELETE FROM partida WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
-        try (PreparedStatement ps = puente.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
+        try {
+            puente.setAutoCommit(false);
+
+            try (PreparedStatement ps = puente.prepareStatement(sqlSocias)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            try (PreparedStatement ps = puente.prepareStatement(sqlInvitadas)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            try (PreparedStatement ps = puente.prepareStatement(sqlPartida)) {
+                ps.setInt(1, id);
+                ps.executeUpdate();
+            }
+
+            puente.commit();
+
+        } catch (SQLException e) {
+            puente.rollback();
+            throw e;
+        } finally {
+            puente.setAutoCommit(true);
         }
     }
 
