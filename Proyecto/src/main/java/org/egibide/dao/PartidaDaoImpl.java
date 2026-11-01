@@ -15,7 +15,6 @@ import java.util.List;
 
 public class PartidaDaoImpl implements PartidaDao {
 
-    // NUEVO: se usa para cargar el juego completo de cada partida
     private JuegoDao juegoDao = new JuegoDaoImpl();
 
     private InscripcionDao inscripcionDao = new InscripcionDaoImpl();
@@ -31,7 +30,21 @@ public class PartidaDaoImpl implements PartidaDao {
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
-                lista.add(mapearPartida(rs));
+                Partida partida = new Partida();
+                partida.setId(rs.getInt("id"));
+                partida.setFecha(rs.getDate("fecha").toLocalDate());
+                partida.setHora(rs.getTime("hora").toLocalTime());
+                partida.setJugadoresDeseados(rs.getInt("jugadores_deseados"));
+                partida.setPlazasLibres(rs.getInt("plazas_libres"));
+
+                // Carga el juego de la partida a partir de su id
+                partida.setJuego(juegoDao.buscarPorId(rs.getInt("juego_id")));
+                // Carga las socias e invitadas de la partida con su id
+                partida.setListaJugadorasSocias(inscripcionDao.listarSocias(partida.getId()));
+                partida.setListaJugadorasInvitadas(inscripcionDao.listarInvitadas(partida.getId()));
+
+                // Las jugadoras se cargarán cuando tengamos el DAO de inscripciones
+                lista.add(partida);
             }
         }
         return lista;
@@ -71,7 +84,17 @@ public class PartidaDaoImpl implements PartidaDao {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapearPartida(rs);
+                    Partida partida = new Partida();
+                    partida.setId(rs.getInt("id"));
+                    partida.setFecha(rs.getDate("fecha").toLocalDate());
+                    partida.setHora(rs.getTime("hora").toLocalTime());
+                    partida.setJugadoresDeseados(rs.getInt("jugadores_deseados"));
+                    partida.setPlazasLibres(rs.getInt("plazas_libres"));
+
+                    // Carga el juego de la partida a partir de su id
+                    partida.setJuego(juegoDao.buscarPorId(rs.getInt("juego_id")));
+
+                    return partida;
                 }
             }
         }
@@ -116,7 +139,6 @@ public class PartidaDaoImpl implements PartidaDao {
 
     @Override
     public void actualizar(Partida partida) throws SQLException {
-        // MODIFICADO: añadido "hora = ?" (antes faltaba y fallaba al ejecutar)
         String sql = "UPDATE partida SET juego_id = ?, fecha = ?, hora = ?, jugadores_deseados = ?, plazas_libres = ? WHERE id = ?";
         Connection puente = DatabaseConnection.getInstance().getConnection();
 
@@ -161,7 +183,7 @@ public class PartidaDaoImpl implements PartidaDao {
         return lista;
     }
 
-    // Method común para realizar las búsquedas.
+    // Method común para realizar las búsquedas
     private List<Partida> buscarPartidas(String sql, String valor) throws SQLException {
         List<Partida> lista = new ArrayList<>();
         Connection puente = DatabaseConnection.getInstance().getConnection();
@@ -179,7 +201,7 @@ public class PartidaDaoImpl implements PartidaDao {
         return lista;
     }
 
-    // Convierte los datos de la consulta en un objeto Partida.
+    // Convierte los datos de la consulta en un objeto Partida
     private Partida mapearPartida(ResultSet rs) throws SQLException {
         Partida partida = new Partida();
 
@@ -189,10 +211,11 @@ public class PartidaDaoImpl implements PartidaDao {
         partida.setJugadoresDeseados(rs.getInt("jugadores_deseados"));
         partida.setPlazasLibres(rs.getInt("plazas_libres"));
 
-        // Recuperar el juego asociado a la partida.
+        // Recuperar el juego asociado a la partida
         JuegoDao juegoDao = new JuegoDaoImpl();
         Juego juego = juegoDao.buscarPorId(rs.getInt("juego_id"));
         partida.setJuego(juego);
 
         return partida;
     }
+}
