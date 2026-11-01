@@ -1,16 +1,28 @@
 package org.egibide.gui;
 
+import org.egibide.utils.RegistroSesiones;
+
 import javax.swing.JFrame;
 import javax.swing.JTabbedPane;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class VentanaPrincipal extends JFrame {
 
-    public VentanaPrincipal() {
+    public VentanaPrincipal(String usuario) {
         // Título, tamaño y comportamiento de la ventana
-        setTitle("Asociación de juegos de mesa");
+        setTitle("Asociación de juegos de mesa - Usuario: " + usuario);
         setSize(900, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // al cerrar la ventana, termina el programa
         setLocationRelativeTo(null);                    // la centra en la pantalla
+
+        // NUEVO: cuando se cierra la ventana, se apunta la salida en el registro de sesiones
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                RegistroSesiones.registrar(usuario, "SALIDA");
+            }
+        });
 
         // Cada panel se guarda en una variable para poder recargarlo después
         PanelJuegos panelJuegos = new PanelJuegos();
